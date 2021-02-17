@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "gradApplication"
+  "defaultProject": "gradApplication",
+  "cli": {
+    "analytics": "d61a24b4-20d6-4f4e-8c19-9c40534dcf4d"
+  }
 }

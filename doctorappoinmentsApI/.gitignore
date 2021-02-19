@@ -1,0 +1,6 @@
+Local/
+**/obj
+**/bin
+**/.vs
+bin
+**/debug

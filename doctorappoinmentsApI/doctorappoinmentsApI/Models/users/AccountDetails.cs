@@ -14,8 +14,7 @@ namespace doctorappoinmentsApI.Models.users
         public string Username { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string IdNumber { get; set; }
-        public bool IsDoctor { get; set; }
+        public bool IsLecture { get; set; }
         public bool Admin { get; set; }
         public DateTime CreateDateTime { get; set; }
 

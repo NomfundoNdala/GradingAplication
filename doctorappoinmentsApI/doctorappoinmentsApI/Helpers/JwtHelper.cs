@@ -21,7 +21,7 @@ namespace doctorappoinmentsApI.Helpers
 
         public static string BuildJwt(Guid accountId,
             double? validMinutes = null,
-            bool isDoctor = false, bool admin = false)
+            bool isLecture = false, bool admin = false)
         {
             if (JwtSecret == null)
                 throw new InvalidOperationException($"{nameof(JwtHelper)}.{nameof(JwtSecret)} not initialized");
@@ -35,7 +35,7 @@ namespace doctorappoinmentsApI.Helpers
             {
                 AccountId = accountId,
                 Expires = DateTimeOffset.UtcNow.AddMinutes(validMinutes.Value).ToUnixTimeSeconds(),
-                IsDoctor = isDoctor,
+                IsLecture = isLecture,
                 Admin = admin
             }, JwtSecret);
 

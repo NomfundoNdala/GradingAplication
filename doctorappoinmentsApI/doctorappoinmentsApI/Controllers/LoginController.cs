@@ -40,8 +40,8 @@ namespace doctorappoinmentsApI.Controllers
 
             if (user != null)
             {
-                var jwtDetails = JwtHelper.BuildJwt(user.AccountId, isDoctor: user.IsDoctor, admin: user.Admin);
-                return Ok(new { status = true, message = "Successfull Request", data = new { name = user.Name, surname = user.Surname, idNumber = user.IdNumber, jwt = jwtDetails } });
+                var jwtDetails = JwtHelper.BuildJwt(user.AccountId, isLecture: user.IsLecture, admin: user.Admin);
+                return Ok(new { status = true, message = "Successfull Request", data = new { name = user.Name, surname = user.Surname, stuffNumber = user.Username, jwt = jwtDetails } });
             }
             return Ok(new { status = false, message = "Account does not exist", data = password });
         }

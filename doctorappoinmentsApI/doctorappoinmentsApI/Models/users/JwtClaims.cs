@@ -15,9 +15,9 @@ namespace doctorappoinmentsApI.Models.users
 
         [JsonIgnore] public bool Invalid;
 
-        [JsonProperty("isDoctor", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+        [JsonProperty("IsLecture", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
         [DefaultValue(false)]
-        public bool IsDoctor;
+        public bool IsLecture;
 
         [JsonProperty("admin", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
         [DefaultValue(false)]

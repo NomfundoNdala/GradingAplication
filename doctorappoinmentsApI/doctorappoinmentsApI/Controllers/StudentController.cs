@@ -39,8 +39,8 @@ namespace doctorappoinmentsApI.Controllers
         public IActionResult Create([FromBody] StudentDto newStudents)
         {
 
-            var exixstinPatient = _mongoRepositoryStudents.FindOneAsync(x => x.StudentNumber.Equals(newStudents.StudentNumber)).Result;
-            if (exixstinPatient != null)
+            var exixstinStudent = _mongoRepositoryStudents.FindOneAsync(x => x.StudentNumber.Equals(newStudents.StudentNumber)).Result;
+            if (exixstinStudent != null)
             {
                 return BadRequest(new { status = false, message = "Students already exist", data = "" });
             }
@@ -48,7 +48,7 @@ namespace doctorappoinmentsApI.Controllers
             var group = _mongoRepositoryGroup.FindOne(x => x.GroupName.ToLower().Equals(newStudents.Groupname.ToLower()));
             if (group == null)
             {
-                return BadRequest(new { status = false, message = "Students Group does not exist", data = "" });
+                return BadRequest(new { status = false, message = $"Students Group {newStudents.Groupname} does not exist", data = "" });
             }
             var student = new Students()
             {
@@ -107,7 +107,6 @@ namespace doctorappoinmentsApI.Controllers
             studentOld.Name = student.Name;
             studentOld.Surname = student.Surname;
             studentOld.TotalMark = student.TotalMark;
-
             _mongoRepositoryStudents.ReplaceOne(studentOld);
 
             return Ok(new { status = true, message = "successful request", data = studentOld });

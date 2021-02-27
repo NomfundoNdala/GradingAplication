@@ -1,11 +1,15 @@
 ﻿using doctorappoinmentsApI.Helpers;
 using doctorappoinmentsApI.Models.Lecturer;
+using doctorappoinmentsApI.Models.Marks;
 using doctorappoinmentsApI.Models.Mongo;
+using doctorappoinmentsApI.Models.Students;
 using doctorappoinmentsApI.Models.users;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace doctorappoinmentsApI.Controllers
@@ -17,11 +21,13 @@ namespace doctorappoinmentsApI.Controllers
 
         private readonly IMongoRepository<AccountDetails> _mongoRepositoryAccountDetails;
         private readonly IMongoRepository<Lecture> _mogoRepositoryLecture;
+        private readonly IMongoRepository<Group> _mongoRepositoryGroup;
 
-        public LectureController(IMongoRepository<AccountDetails> mongoRepositoryAccountDetails, IMongoRepository<Lecture> mongoRepositoryLecture)
+        public LectureController(IMongoRepository<AccountDetails> mongoRepositoryAccountDetails, IMongoRepository<Lecture> mongoRepositoryLecture, IMongoRepository<Group> mongoRepositoryGroup)
         {
             _mongoRepositoryAccountDetails = mongoRepositoryAccountDetails;
             _mogoRepositoryLecture = mongoRepositoryLecture;
+            _mongoRepositoryGroup = mongoRepositoryGroup;
         }
 
         [HttpGet]
@@ -166,6 +172,41 @@ namespace doctorappoinmentsApI.Controllers
                 return Ok(new { status = true, message = "successful request", data = newLecture });
             }
 
+            return Ok(new { status = false, message = "Request to be performed by a lecture or admin ", data = "" });
+        }
+
+        [HttpPost]
+        [Route("CreateGroup")]
+
+        public async Task<IActionResult> CreateGroup([FromBody] GroupDTO group)
+        {
+            var claims = Request.GetJwtClaims();
+
+            if (!claims.IsValidLogin())
+                return claims.Get401Result();
+
+            if (claims.IsLecture || claims.Admin)
+            {
+                var oldGroup = _mongoRepositoryGroup.FindOne(x => x.GroupName.ToLower().Equals(group.GroupName.ToLower()));
+
+                if (oldGroup == null)
+                {
+                    var g = new Group()
+                    {
+                        GroupId = @group.GroupId,
+                        GroupName = @group.GroupName,
+                        Assignemts = new Dictionary<string, Marks>()
+                            {{"", new Marks() {Mark = 0, Name = "", Weight = 0}}}
+                    };
+                    await _mongoRepositoryGroup.InsertOneAsync(g);
+                    return Ok(new { status = true, message = "successful request", data = @group });
+                }
+                else
+                {
+                    return BadRequest(new
+                    { status = true, message = $"Group name {@group.GroupName} already exist", data = @group });
+                }
+            }
             return Ok(new { status = false, message = "Request to be performed by a lecture or admin ", data = "" });
         }
     }

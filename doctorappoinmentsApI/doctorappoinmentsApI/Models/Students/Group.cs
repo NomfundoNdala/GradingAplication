@@ -7,7 +7,7 @@ namespace doctorappoinmentsApI.Models.Students
     public class Group : Document
     {
         public string GroupName { get; set; }
-        public string Groupid { get; set; }
-        public Dictionary<string, string[]> Marks { get; set; }
+        public string GroupId { get; set; }
+        public Dictionary<string, Marks.Marks> Assignemts { get; set; }
     }
 }

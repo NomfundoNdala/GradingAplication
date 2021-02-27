@@ -16,13 +16,13 @@ namespace doctorappoinmentsApI.Controllers
             _mongoRepositoryAccountDetails = mongoRepositoryAccountDetails;
         }
 
-        [HttpPost]
-        [Route("createAcount")]
+        //[HttpPost]
+        //[Route("createAcount")]
 
-        public IActionResult CreateAccount()
-        {
-            return Ok();
-        }
+        //public IActionResult CreateAccount()
+        //{
+        //    return Ok();
+        //}
 
         [HttpPost]
         [Route("login")]

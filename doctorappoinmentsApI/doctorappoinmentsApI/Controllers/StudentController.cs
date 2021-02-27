@@ -45,7 +45,7 @@ namespace doctorappoinmentsApI.Controllers
                 return BadRequest(new { status = false, message = "Students already exist", data = "" });
             }
 
-            var group = _mongoRepositoryGroup.FindOne(x => x.GroupName.ToLower().Equals(newStudents.Groupname.ToLower()));
+            var group = _mongoRepositoryGroup.FindOne(x => x.GroupName.Equals(newStudents.Groupname.ToLower()));
             if (group == null)
             {
                 return BadRequest(new { status = false, message = $"Students Group {newStudents.Groupname} does not exist", data = "" });

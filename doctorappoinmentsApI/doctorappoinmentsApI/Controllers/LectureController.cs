@@ -187,7 +187,7 @@ namespace doctorappoinmentsApI.Controllers
 
             if (claims.IsLecture || claims.Admin)
             {
-                var oldGroup = _mongoRepositoryGroup.FindOne(x => x.GroupName.ToLower().Equals(group.GroupName.ToLower()));
+                var oldGroup = _mongoRepositoryGroup.FindOne(x => x.GroupName.Equals(group.GroupName.ToLower()));
 
                 if (oldGroup == null)
                 {
@@ -196,7 +196,7 @@ namespace doctorappoinmentsApI.Controllers
                         GroupId = @group.GroupId,
                         GroupName = @group.GroupName,
                         Assignemts = new Dictionary<string, Marks>()
-                            {{"", new Marks() {Mark = 0, Name = "", Weight = 0}}}
+                            {{Guid.NewGuid().ToString(), new Marks() {Mark = 0, Name = string.Empty, Weight = 0}}}
                     };
                     await _mongoRepositoryGroup.InsertOneAsync(g);
                     return Ok(new { status = true, message = "successful request", data = @group });

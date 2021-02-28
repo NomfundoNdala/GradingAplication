@@ -33,6 +33,22 @@ namespace doctorappoinmentsApI.Controllers
             var allPatient = _mongoRepositoryStudents.AsQueryable().ToList();
             return Ok(new { status = true, message = "successful request", data = allPatient });
         }
+        [HttpGet]
+        [Route("getStudent")]
+        public IActionResult GetStudent(string studentNumber)
+        {
+            var claims = Request.GetJwtClaims();
+
+            if (!claims.IsValidLogin())
+                return claims.Get401Result();
+            if (string.IsNullOrEmpty(studentNumber))
+                return BadRequest(new { status = true, message = "groupName cannot be null or empty", data = studentNumber });
+
+            if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
+
+            var st = _mongoRepositoryStudents.FindOne(x => x.StudentNumber.Equals(studentNumber));
+            return Ok(new { status = true, message = "successful request", data = st });
+        }
 
         [HttpPost]
         [Route("create")]

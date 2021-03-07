@@ -6,10 +6,9 @@
     </div>
 
     <div class="dataContainer" *ngIf="dataFound">
-        <mat-form-field>
-            <mat-label>Filter</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. 215758390" #input>
-        </mat-form-field>
+
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. 215758390" #input>
+
         <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
             <ng-container matColumnDef="{{col}}" *ngFor="let col of columnsToDisplay">
                 <th mat-header-cell *matHeaderCellDef> {{col}} </th>

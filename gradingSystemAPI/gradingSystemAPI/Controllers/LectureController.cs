@@ -95,8 +95,6 @@ namespace gradingSystemAPI.Controllers
             {
                 return BadRequest(new { status = false, message = "account id cannot be null or empty", data = "" });
             }
-
-
             return Ok(new { status = true, message = "successful request", data = details });
         }
 
@@ -189,7 +187,16 @@ namespace gradingSystemAPI.Controllers
             {
                 var oldGroup = _mongoRepositoryGroup.FindOne(x => x.GroupName.Equals(group.GroupName.ToLower()));
 
-                if (oldGroup == null)
+                var gTemp = string.Empty;
+                var groups = _mongoRepositoryGroup.AsQueryable().ToList();
+                foreach (var grp in groups)
+                {
+                    if (grp.GroupName.ToLower().Equals(group.GroupName.ToLower()))
+                    {
+                        gTemp = grp.GroupName;
+                    }
+                }
+                if (gTemp != string.Empty)
                 {
                     var g = new Group()
                     {
@@ -208,6 +215,22 @@ namespace gradingSystemAPI.Controllers
                 }
             }
             return Ok(new { status = false, message = "Request to be performed by a lecture or admin ", data = "" });
+        }
+        [HttpGet]
+        [Route("getAllGroups")]
+        public IActionResult GetAllGroups()
+        {
+            var claims = Request.GetJwtClaims();
+
+            if (!claims.IsValidLogin())
+                return claims.Get401Result();
+
+            var details = _mongoRepositoryGroup.AsQueryable().ToList();
+            if (details == null)
+            {
+                return BadRequest(new { status = false, message = "account id cannot be null or empty", data = "" });
+            }
+            return Ok(new { status = true, message = "successful request", data = details });
         }
     }
 }

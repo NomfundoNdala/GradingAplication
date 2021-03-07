@@ -61,17 +61,25 @@ namespace gradingSystemAPI.Controllers
                 return BadRequest(new { status = false, message = "Students already exist", data = "" });
             }
 
-            var group = _mongoRepositoryGroup.FindOne(x => x.GroupName.Equals(newStudents.Groupname.ToLower()));
-            if (group == null)
+            var g = string.Empty;
+            var groups = _mongoRepositoryGroup.AsQueryable().ToList();
+            foreach (var group in groups)
+            {
+                if (group.GroupName.ToLower().Equals(newStudents.Groupname.ToLower()))
+                {
+                    g = group.GroupName;
+                }
+            }
+            if (g == string.Empty)
             {
                 return BadRequest(new { status = false, message = $"Students Group {newStudents.Groupname} does not exist", data = "" });
             }
             var student = new Students()
             {
-                GroupName = newStudents.Groupname,
+                GroupName = g,
                 Name = newStudents.Name,
                 StudentNumber = newStudents.StudentNumber,
-                TotalMark = "",
+                TotalMark = "0",
                 Surname = newStudents.Surname,
                 UniqueId = Guid.NewGuid().ToString()
             };

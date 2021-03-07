@@ -59,7 +59,8 @@ export class LoginComponent implements OnInit {
           console.log(data.message);
           if (data.status) {
             this.success = data.message;
-            this.router.navigate(['/home']);
+            this.error = '';
+            this.router.navigateByUrl('/home');
           } else {
             this.error = data.message;
           }
@@ -67,6 +68,7 @@ export class LoginComponent implements OnInit {
         },
         error => {
           this.error = error;
+          this.success = '';
           this.loading = false;
         });
   }

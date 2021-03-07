@@ -58,6 +58,7 @@ export class LoginComponent implements OnInit {
         data => {
           console.log(data.message);
           if (data.status) {
+            localStorage.setItem('userInfo', data.data);
             this.success = data.message;
             this.error = '';
             this.router.navigateByUrl('/home');

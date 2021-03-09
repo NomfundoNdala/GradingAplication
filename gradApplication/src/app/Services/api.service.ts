@@ -23,6 +23,7 @@ export class ApiService {
     hearders = new HttpHeaders().set(
       "Authorization", 'Bearer ' + LoggedUserData.jwt
     );
+    return hearders;
   }
 
   login(username: string, password: string) {

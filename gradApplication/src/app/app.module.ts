@@ -12,6 +12,8 @@ import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { StudentComponent } from './Components/student/student.component';
+
 
 const modules = [
   MatButtonModule,
@@ -29,7 +31,8 @@ const modules = [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    HomeComponent
+    HomeComponent,
+    StudentComponent
   ],
   imports: [...modules],
   exports: [...modules],

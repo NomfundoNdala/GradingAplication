@@ -46,10 +46,10 @@ export class StudentComponent implements OnInit {
       totalMark: '0'
     }
     
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  get f() { return this.registerForm.controls; }
+  get f(){ return this.registerForm.controls; }
 
   onSubmit() {
     this.submitted = true;

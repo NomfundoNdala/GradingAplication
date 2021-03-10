@@ -83,6 +83,7 @@ export class StudentComponent implements OnInit {
 
         //why do you route back to home after a student has been registered ???
         this.router.navigateByUrl('/home');
+        
       } else {
         this.error = data.message;
       }

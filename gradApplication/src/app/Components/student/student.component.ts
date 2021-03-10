@@ -72,25 +72,27 @@ export class StudentComponent implements OnInit {
     this.loading = true;
     this.studentService.createStudent(this.student).subscribe((data: any) => {
       console.log(data.message);
+      console.log(data)
       if (data.status) {
         // this means we are saving in to local storage. why do you need to savw data after creating studennt ???
         //  localStorage.setItem('userInfo', JSON.stringify(data.data));
 
         //when you set success to a message , you need to stop the loading too meaning 
-        //  this.loading = false;  this stops the loading
+        this.loading = false;  //this stops the loading
         this.success = data.message;
         this.error = '';
 
         //why do you route back to home after a student has been registered ???
-        this.router.navigateByUrl('/home');
-        
+        //this.router.navigateByUrl('/home');
+       
+
       } else {
         this.error = data.message;
       }
       this.loading = false;
     },
       error => {
-        this.error = error;
+        this.error = error.message;
         this.success = '';
         this.loading = false;
       });

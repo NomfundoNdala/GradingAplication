@@ -13,6 +13,6 @@ export class StudentServiceService {
 
   createStudent(student : IStudent)
   {
-    return this.httpClient.post(this.apiUrl + '/api/Student/create', {headers: this.apiService.getLoggedUserData()});
+    return this.httpClient.post(this.apiUrl + '/api/Student/create',student, {headers: this.apiService.getLoggedUserData()});
   }
 }

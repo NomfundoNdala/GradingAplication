@@ -20,6 +20,7 @@ export class StudentComponent implements OnInit {
   success = ''
   student!: IStudent;
 
+ 
 
   constructor(
     private studentService: StudentServiceService,
@@ -37,6 +38,14 @@ export class StudentComponent implements OnInit {
       groupName: ['', Validators.required]
     });
 
+    this.student = {
+      groupName: this.f.groupName.value,
+      name: this.f.name.value,
+      surname: this.f.surname.value,
+      studentNumber: this.f.studentNumber.value,
+      totalMark: '0'
+    }
+    
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 

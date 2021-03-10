@@ -3,7 +3,7 @@ export interface IStudent {
     surname: number;
     studentNumber: number;
     totalMark: string;
-    uniqueId: string;
+    uniqueId?: string;
     groupName: string,
     id?: any
 }

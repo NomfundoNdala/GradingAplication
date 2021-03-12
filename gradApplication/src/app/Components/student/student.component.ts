@@ -20,7 +20,7 @@ export class StudentComponent implements OnInit {
   success = ''
   student!: IStudent;
 
- 
+
 
   constructor(
     private studentService: StudentServiceService,
@@ -45,11 +45,11 @@ export class StudentComponent implements OnInit {
       studentNumber: this.f.studentNumber.value,
       totalMark: '0'
     }
-    
+
     //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  get f(){ return this.registerForm.controls; }
+  get f() { return this.registerForm.controls; }
 
   onSubmit() {
     this.submitted = true;
@@ -84,7 +84,7 @@ export class StudentComponent implements OnInit {
 
         //why do you route back to home after a student has been registered ???
         //this.router.navigateByUrl('/home');
-       
+
 
       } else {
         this.error = data.message;

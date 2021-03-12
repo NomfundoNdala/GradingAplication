@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { submitAssigmentDTO } from '../Components/Assigment/Assigmnt1';
 import { IStudent } from '../Interfaces/Student';
 import { ApiService } from './api.service';
 
@@ -8,11 +9,14 @@ import { ApiService } from './api.service';
 })
 export class StudentServiceService {
   apiUrl = "https://gradingsystemapi20210307145917.azurewebsites.net";
-  constructor(private httpClient: HttpClient,  private apiService: ApiService) { }
+  constructor(private httpClient: HttpClient, private apiService: ApiService) { }
 
 
-  createStudent(student : IStudent)
-  {
-    return this.httpClient.post(this.apiUrl + '/api/Student/create',student, {headers: this.apiService.getLoggedUserData()});
+  createStudent(student: IStudent) {
+    return this.httpClient.post(this.apiUrl + '/api/Student/create', student, { headers: this.apiService.getLoggedUserData() });
+  }
+
+  submitAssigment(assigment: submitAssigmentDTO) {
+    return this.httpClient.post(this.apiUrl + '/api/Student/MarkedAssigment', assigment, { headers: this.apiService.getLoggedUserData() });
   }
 }

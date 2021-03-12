@@ -1,5 +1,7 @@
 ﻿using doctorappoinmentsApI.Models.Mongo;
+using gradingSystemAPI.Models.Assigments;
 using gradingSystemAPI.Models.Mongo;
+using System.Collections.Generic;
 
 namespace gradingSystemAPI.Models.Students
 {
@@ -12,6 +14,8 @@ namespace gradingSystemAPI.Models.Students
         public string TotalMark { get; set; }
         public string UniqueId { get; set; }
         public string GroupName { get; set; }
+
+        public List<Assignment> Assignments { get; set; }
 
     }
 }

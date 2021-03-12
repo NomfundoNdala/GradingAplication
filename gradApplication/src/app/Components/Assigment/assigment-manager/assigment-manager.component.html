@@ -1,0 +1,75 @@
+<div class="col-md-6 offset-md-3 mt-5">
+    <select class="form-control" id='assigments' name='assigmentslist' [ngModel]="select"
+        (ngModelChange)="onChooseAssigmentChange($event)">
+        <option *ngFor="let item of assigmentTemplate" [ngValue]="item.index">{{item.name}}</option>
+    </select>
+    <div class="card">
+        <h4 class="card-header">Assement Mark Sheet</h4>
+        <div class="card-body">
+            <form [formGroup]="assigmentForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" formControlName="name" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f.name.errors }" />
+                    <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                        <div *ngIf="f.name.errors.required">Name is required</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="total">Total </label>
+                    <input type="number" formControlName="total" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f.total.errors }" />
+                    <div *ngIf="submitted && f.total.errors" class="invalid-feedback">
+                        <div *ngIf="f.total.errors.required"> Total is required</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="weight">Weight</label>
+                    <input type="number" formControlName="weight" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f.weight.errors }" />
+                    <div *ngIf="submitted && f.weight.errors" class="invalid-feedback">
+                        <div *ngIf="f.weight.errors.required">Weight Number is required</div>
+                    </div>
+                </div>
+
+                <div style="border: 2px solid #000; padding: 10px;" class="form-group">
+                    <label for="mainTitle">Aspect to be evaluated on</label>
+                    <div style="width: 100%;" formArrayName="mainTitle"
+                        *ngFor="let item of f.mainTitle.value; let i=index;">
+                        <div style="border: 2px solid #000;" formArrayName="{{i}}">
+                            <div style="width: 50%; height: 115px; float: left;">
+                                <input formControlName="description" style="height: '100%';" type="text"
+                                    class="form-control"
+                                    [ngClass]="{ 'is-invalid': submitted && item.description.errors }" />
+                                <div *ngIf="submitted && item.description.errors" class="invalid-feedback">
+                                    <div *ngIf="item.description.errors.required">Weight Number is required</div>
+                                </div>
+                            </div>
+
+                            <div formGroupName="content" style="margin-left: 50%; height: 100px;">
+                                <input class="form-control" formControlName="totalMark" placeholder="Total Mark">
+                                <input class="form-control" formControlName="learnerMark" placeholder="Learner Mark">
+                                <input class="form-control" formControlName="comment" placeholder="comment">
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                </div>
+
+                <button [disabled]="loading" class="btn btn-primary">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                    SUBMIT
+
+                </button>
+                <div *ngIf="error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
+                <div *ngIf="success" class="alert alert-success mt-3 mb-0">{{success}}</div>
+            </form>
+        </div>
+    </div>
+</div>

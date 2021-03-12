@@ -1,7 +1,7 @@
 ﻿using doctorappoinmentsApI.Models.Mongo;
 using gradingSystemAPI.Helpers;
+using gradingSystemAPI.Models.Assigments;
 using gradingSystemAPI.Models.Lecturer;
-using gradingSystemAPI.Models.Marks;
 using gradingSystemAPI.Models.Students;
 using gradingSystemAPI.Models.users;
 using Microsoft.AspNetCore.Mvc;
@@ -46,14 +46,24 @@ namespace gradingSystemAPI.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IActionResult Create([FromBody] LectureDTO newLecture)
+        public async Task<IActionResult> Create([FromBody] LectureDTO newLecture)
         {
 
-            var exixstinDoctor =
-                _mongoRepositoryAccountDetails.FindOneAsync(x => x.Username.Equals(newLecture.StuffNumber)).Result;
+            //var claims = Request.GetJwtClaims();
+
+            //if (!claims.IsValidLogin())
+            //    return claims.Get401Result();
+
+            //if (!claims.Admin)
+            //{
+            //    return Ok(new { status = false, message = "Request to be performed by a lecture or admin ", data = "" });
+            //}
+
+            var exixstinDoctor = await
+                _mongoRepositoryAccountDetails.FindOneAsync(x => x.Username.Equals(newLecture.StuffNumber));
             if (exixstinDoctor != null)
             {
-                return BadRequest(new { status = false, message = "Account already exist", data = "" });
+                return BadRequest(new { status = false, message = "Account already exist", data = exixstinDoctor });
             }
             var lecture = new Lecture()
             {
@@ -75,8 +85,8 @@ namespace gradingSystemAPI.Controllers
                 Admin = false,
                 IsLecture = true
             };
-            _mongoRepositoryAccountDetails.InsertOneAsync(account);
-            _mogoRepositoryLecture.InsertOneAsync(lecture);
+            await _mongoRepositoryAccountDetails.InsertOneAsync(account);
+            await _mogoRepositoryLecture.InsertOneAsync(lecture);
 
             return Ok(new { status = true, message = "successful request", data = lecture });
         }
@@ -189,9 +199,20 @@ namespace gradingSystemAPI.Controllers
 
                 var gTemp = string.Empty;
                 var groups = _mongoRepositoryGroup.AsQueryable().ToList();
+                if (groups.Count == 0)
+                {
+                    var g = new Group()
+                    {
+                        GroupId = @group.GroupId,
+                        GroupName = @group.GroupName,
+                        Assignemts = new List<Assignment>() { }
+                    };
+                    await _mongoRepositoryGroup.InsertOneAsync(g);
+                    return Ok(new { status = true, message = "successful request", data = @group });
+                }
                 foreach (var grp in groups)
                 {
-                    if (grp.GroupName.ToLower().Equals(group.GroupName.ToLower()))
+                    if (!grp.GroupName.ToLower().Equals(group.GroupName.ToLower()))
                     {
                         gTemp = grp.GroupName;
                     }
@@ -202,8 +223,7 @@ namespace gradingSystemAPI.Controllers
                     {
                         GroupId = @group.GroupId,
                         GroupName = @group.GroupName,
-                        Assignemts = new Dictionary<string, Marks>()
-                            {{Guid.NewGuid().ToString(), new Marks() {Mark = 0, Name = string.Empty, Weight = 0}}}
+                        Assignemts = new List<Assignment>() { }
                     };
                     await _mongoRepositoryGroup.InsertOneAsync(g);
                     return Ok(new { status = true, message = "successful request", data = @group });

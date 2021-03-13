@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/Services/auth.service';
 import { StudentServiceService } from 'src/app/Services/student-service.service';
 import { Assigment, dropDownTemplate, MainProperties, mainTitleContent, submitAssigmentDTO } from '../../Assigment/Assigmnt1'
 
@@ -606,7 +608,7 @@ const choosenTemplate: any[] = [Assigment1, Assigment2, Assigment3, Assigment4, 
   styleUrls: ['./assigment-manager.component.scss']
 })
 export class AssigmentManagerComponent implements OnInit {
-
+  isUserLoggedIn = false;
   assigmentForm!: FormGroup;
   mainTitle!: FormArray;
   loading = false;
@@ -622,9 +624,16 @@ export class AssigmentManagerComponent implements OnInit {
   { index: 4, name: 'Assigment5' }]
 
   //["Assigment1", "Assigment2", "Assigment3"];
-  constructor(private formBuilder: FormBuilder, private studentService: StudentServiceService) {
-
+  constructor(
+    private formBuilder: FormBuilder, 
+    private studentService: StudentServiceService,
+     private authService: AuthService,
+     private router: Router) {
+      if (authService.getIsUserLoggedIn()) {
+        this.isUserLoggedIn = true;
   }
+}
+
 
   ngOnInit(): void {
     this.initializeForm(Assigment1);

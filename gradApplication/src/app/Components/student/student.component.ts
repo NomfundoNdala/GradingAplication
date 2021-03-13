@@ -1,3 +1,4 @@
+import { AuthService } from 'src/app/Services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { StudentServiceService } from 'src/app/Services/student-service.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -12,6 +13,7 @@ import { IStudent } from 'src/app/Interfaces/Student';
   styleUrls: ['./student.component.scss']
 })
 export class StudentComponent implements OnInit {
+  isUserLoggedIn = false;
   registerForm!: FormGroup;
   loading = false;
   submitted = false;
@@ -27,8 +29,16 @@ export class StudentComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService
-  ) { }
+    private apiService: ApiService,
+    private authService: AuthService
+  ) {
+    if (authService.getIsUserLoggedIn()) {
+      this.isUserLoggedIn = true;
+     
+    }else{
+      this.router.navigateByUrl('/login');
+    }
+   }
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({

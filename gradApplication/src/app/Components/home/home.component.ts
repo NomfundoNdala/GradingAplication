@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from 'src/app/Services/api.service';
 import { first } from 'rxjs/operators';
 import { IStudent } from 'src/app/Interfaces/Student';
+import { AuthService } from 'src/app/Services/auth.service';
+import { Router } from '@angular/router';
 
 const ELEMENT_DATA: IStudent[] = [];
 
@@ -20,6 +22,7 @@ const ELEMENT_DATA: IStudent[] = [];
   ],
 })
 export class HomeComponent implements OnInit {
+  isUserLoggedIn = false;
   error = '';
   success = ''
   loading = false;
@@ -27,13 +30,9 @@ export class HomeComponent implements OnInit {
   columnsToDisplay = ['studentNumber', 'name', 'surname', 'groupName', 'totalMark'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   expandedElement: IStudent = ELEMENT_DATA[0];
-  constructor(private apiService: ApiService) {}
-
-    
-  
-
-  ngOnInit(): void {
-
+  constructor(private apiService: ApiService, private authService: AuthService,private router: Router) {
+    if (authService.getIsUserLoggedIn()) {
+      this.isUserLoggedIn = true;
     this.apiService.getAllStudents().pipe(first())
       .subscribe(
         data => {
@@ -51,8 +50,16 @@ export class HomeComponent implements OnInit {
           this.error = error;
           this.loading = false;
         });
-    this.loading = true;
+        apiService.getAllGroups().subscribe((data)=>{
+          console.log(data);
+        })
+      } else{
+        this.router.navigateByUrl('/login');
+      }
+    }
 
+  ngOnInit(): void {
+    this.loading = true;
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

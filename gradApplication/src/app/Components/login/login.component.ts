@@ -4,6 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { ApiService } from 'src/app/Services/api.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { AuthService } from 'src/app/Services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +13,7 @@ import { ApiService } from 'src/app/Services/api.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-
+  isUserLoggedIn = false;
   loginForm!: FormGroup;
   loading = false;
   submitted = false;
@@ -23,12 +25,14 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private authService: AuthService
+
   ) {
-    // redirect to home if already logged in
-    // if (this.authenticationService.currentUserValue) { 
-    //     this.router.navigate(['/']);
-    // }
+    if (authService.getIsUserLoggedIn()) {
+      this.isUserLoggedIn = true;
+      this.router.navigateByUrl('/home');
+    }
   }
 
   ngOnInit() {

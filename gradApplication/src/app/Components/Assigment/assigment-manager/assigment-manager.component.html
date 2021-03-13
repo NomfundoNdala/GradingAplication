@@ -1,5 +1,6 @@
 <div class="col-md-6 offset-md-3 mt-5">
-    <select class="form-control" id='assigments' name='assigmentslist' [ngModel]="select"
+    <select 
+    class="form-control" id='assigments' name='assigmentslist' [ngModel]="select"
         (ngModelChange)="onChooseAssigmentChange($event)">
         <option *ngFor="let item of assigmentTemplate" [ngValue]="item.index">{{item.name}}</option>
     </select>

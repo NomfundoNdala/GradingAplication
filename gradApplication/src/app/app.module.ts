@@ -15,7 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { StudentComponent } from './Components/student/student.component';
 import { AssigmentManagerComponent } from './Components/Assigment/assigment-manager/assigment-manager.component';
 import { LecturerComponent } from './Components/lecturer/lecturer.component';
-import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { NavBarComponent } from './Components/nav-bar/nav-bar.component';
 
 
 

@@ -5,6 +5,7 @@ import { ApiService } from 'src/app/Services/api.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LecturerService } from 'src/app/Services/lecturer.service';
 import { ILecturer } from 'src/app/Interfaces/lecturer';
+import { AuthService } from 'src/app/Services/auth.service';
 
 
 @Component({
@@ -20,17 +21,28 @@ export class LecturerComponent implements OnInit {
     error = '';
     success = ''
     lecturer!: ILecturer;
+    isUserLoggedIn = false;
+    isAdmin = false;
  
-  
-    
-
   constructor(
     private lecturerService : LecturerService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService
-  ) { }
+    private apiService: ApiService, 
+    private authService: AuthService
+  ) {
+    if (authService.getIsUserLoggedIn() && authService.getIsAdmin)
+     {
+    this.isUserLoggedIn = true; 
+    this.isAdmin = true
+  }
+  else
+  {
+    this.router.navigateByUrl('/home');
+  }
+}
+
 
   ngOnInit(): void {
     this.registerLecturerForm = this.formBuilder.group({

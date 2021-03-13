@@ -34,7 +34,7 @@ export class ApiService {
     return this.httpClient.get<ApiResponse>(apiUrl + '/api/Student/getAll', { headers: hearders });
   }
   getAllGroups() {
-    return this.httpClient.get<ApiResponse>(apiUrl + '/api/Student/getAllGroups', { headers: hearders });
+    return this.httpClient.get<ApiResponse>(apiUrl + '/api/Lecture/getAllGroups', { headers: hearders });
   }
 
   getStudent(studentNumber: string) {

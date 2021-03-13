@@ -31,36 +31,37 @@ export class HomeComponent implements OnInit {
   groupNames = [];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   expandedElement: IStudent = ELEMENT_DATA[0];
-  constructor(private apiService: ApiService, private authService: AuthService,private router: Router) {
+  constructor(private apiService: ApiService, private authService: AuthService, private router: Router) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-    this.apiService.getAllStudents().pipe(first())
-      .subscribe(
-        data => {
-          if (data.status) {
-            this.dataSource = new MatTableDataSource(data.data);
-            console.log(this.dataSource, 'data')
-            this.success = data.message;
-          } else {
-            this.error = data.message;
-          }
-          this.dataFound = true;
-          this.loading = false;
-        },
-        error => {
-          this.error = error;
-          this.loading = false;
-        });
-        apiService.getAllGroups().subscribe((data)=>{
-          if(data.status){
-           //loop through data.data to get item.groupName then groupName.push(item.groupName) xD:
-          }
-          console.log(data);
-        })
-      } else{
-        this.router.navigateByUrl('/login');
-      }
+      this.apiService.getAllStudents().pipe(first())
+        .subscribe(
+          data => {
+            if (data.status) {
+              this.dataSource = new MatTableDataSource(data.data);
+              console.log(this.dataSource, 'data')
+              this.success = data.message;
+            } else {
+              this.error = data.message;
+            }
+            this.dataFound = true;
+            this.loading = false;
+          },
+          error => {
+            this.error = error;
+            this.loading = false;
+          });
+      apiService.getAllGroups().subscribe((data) => {
+        if (data.status) {
+          //loop through data.data to get item.groupName then groupName.push(item.groupName) xD:
+          //make sure this is done as described
+        }
+        console.log(data);
+      })
+    } else {
+      this.router.navigateByUrl('/login');
     }
+  }
 
   ngOnInit(): void {
     this.loading = true;

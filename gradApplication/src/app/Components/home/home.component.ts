@@ -50,7 +50,6 @@ export class HomeComponent implements OnInit {
           this.error = error;
           this.loading = false;
         });
-
         apiService.getAllGroups().subscribe((data)=>{
           console.log(data);
         })
@@ -61,7 +60,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

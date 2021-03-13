@@ -21,11 +21,11 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="stuffNumber">Stuff Number</label>
+                    <label for="stuffNumber">Staff Number</label>
                     <input type="stuffNumber" formControlName="stuffNumber" class="form-control"
                         [ngClass]="{ 'is-invalid': submitted && f.stuffNumber.errors }" />
                     <div *ngIf="submitted && f.stuffNumber.errors?.required" class="invalid-feedback">
-                        <div *ngIf="f.stuffNumber.errors?.required">Stuff Number is required</div>
+                        <div *ngIf="f.stuffNumber.errors?.required">Staff Number is required</div>
                     </div>
                 </div>
 

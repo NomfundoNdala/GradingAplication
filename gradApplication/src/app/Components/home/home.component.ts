@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
   loading = false;
   dataFound = false;
   columnsToDisplay = ['studentNumber', 'name', 'surname', 'groupName', 'totalMark'];
+  groupNames = [];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   expandedElement: IStudent = ELEMENT_DATA[0];
   constructor(private apiService: ApiService, private authService: AuthService,private router: Router) {
@@ -51,6 +52,9 @@ export class HomeComponent implements OnInit {
           this.loading = false;
         });
         apiService.getAllGroups().subscribe((data)=>{
+          if(data.status){
+           //loop through data.data to get item.groupName then groupName.push(item.groupName) xD:
+          }
           console.log(data);
         })
       } else{

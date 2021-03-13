@@ -27,7 +27,13 @@ export class HomeComponent implements OnInit {
   columnsToDisplay = ['studentNumber', 'name', 'surname', 'groupName', 'totalMark'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   expandedElement: IStudent = ELEMENT_DATA[0];
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService) {}
+
+    
+  
+
+  ngOnInit(): void {
+
     this.apiService.getAllStudents().pipe(first())
       .subscribe(
         data => {
@@ -45,9 +51,6 @@ export class HomeComponent implements OnInit {
           this.error = error;
           this.loading = false;
         });
-  }
-
-  ngOnInit(): void {
     this.loading = true;
 
   }

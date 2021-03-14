@@ -10,14 +10,17 @@ export class AuthService {
   private isLecture: boolean = false;
   private isAdmin: boolean = false;
   private isUserLoggedIn: boolean = false;
+  private userInfo:any = null;
 
-  constructor(router : Router) {}
+  constructor(private router : Router) {}
 
    checkUserRights() {
     let userInfor = localStorage.getItem('userInfo');
     if (userInfor) {
+      let userInforJson = JSON.parse(userInfor);
+      this.userInfo = userInforJson;
       this.isUserLoggedIn = true;
-      let jwt = JSON.parse(userInfor).jwt;
+      let jwt = userInforJson.jwt;
       const helper = new JwtHelperService();
      const decodedToken = helper.decodeToken(jwt);
      this.isAdmin = decodedToken.admin;
@@ -25,6 +28,9 @@ export class AuthService {
     }
    }
 
+   getUserInfo(){
+     return this.userInfo;
+   }
    getIsAdmin() {
     return this.isAdmin;
    }
@@ -37,8 +43,12 @@ export class AuthService {
      return this.isUserLoggedIn;
    }
 
-   logout() {                            // {4}
+   logout() {                            
    this.isUserLoggedIn = false;
-   //this.router.navigateByUrl('/login');
+   this.isAdmin = false;
+   this.isLecture = false;
+   this.userInfo = null;
+   localStorage.removeItem('userInfo');
+  this.router.navigateByUrl('/login');
  }
 }

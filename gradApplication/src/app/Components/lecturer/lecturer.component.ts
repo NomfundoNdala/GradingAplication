@@ -32,7 +32,7 @@ export class LecturerComponent implements OnInit {
     private apiService: ApiService, 
     private authService: AuthService
   ) {
-    if (authService.getIsUserLoggedIn() && authService.getIsAdmin)
+    if (authService.getIsUserLoggedIn() && authService.getIsAdmin())
      {
     this.isUserLoggedIn = true; 
     this.isAdmin = true

@@ -1,15 +1,24 @@
+<nav *ngIf="isUserLoggedIn" class="navbar navbar-expad-lg navbar-dark bg-primary">
+  <ul class="navbar-nav navbar-left">
 
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <!-- <img src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="30" height="24" class="d-inline-block align-top"> -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
-          </svg>
-        Grader
-      </a>
-    </div>
-  </nav>
+   </ul>
 
-  
+   <ul class="navbar-nav">
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+          <li *ngIf="isUserLoggedIn" class="nav-item avatar dropdown" style="cursor:pointer">
+            <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               <img  src="http://res.cloudinary.com/dk34qvajk/image/upload/v1513190129/placeholder.png" style="border-radius:15px; height:35px; width:35px;">
+               {{userLoggedName}} 
+            </a>
+              <div class="dropdown-menu dropdown-menu-right dropdown-purple" aria-labelledby="navbarDropdownMenuLink-5">
+                <a *ngIf="isAdmin" class="dropdown-item waves-effect waves-light" [routerLinkActive]="['active']" [routerLink]="['/lecturer']">Add Lecturer</a>
+                <a *ngIf="isAdmin" class="dropdown-item waves-effect waves-light" [routerLinkActive]="['active']" [routerLink]="['/reports']">Reports</a>
+                <a class="dropdown-item waves-effect waves-light" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact:true}" (click)="Logout()" >Logout</a>
+            </div>
+          </li>
+        </a>
+    </li>
+</ul>
+ </nav>
+

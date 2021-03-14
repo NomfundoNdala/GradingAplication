@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
-          console.log(data.message);
+          console.log(data);
           if (data.status) {
             localStorage.setItem('userInfo', JSON.stringify(data.data));
             this.success = data.message;

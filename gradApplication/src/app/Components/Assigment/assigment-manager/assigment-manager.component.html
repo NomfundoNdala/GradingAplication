@@ -2,7 +2,7 @@
     <select 
     class="form-control" id='assigments' name='assigmentslist' [ngModel]="select"
         (ngModelChange)="onChooseAssigmentChange($event)">
-        <option *ngFor="let item of assigmentTemplate" [ngValue]="item.index">{{item.name}}</option>
+        <option *ngFor="let item of assigmentTemplate" [ngValue]="item.index">{{item.name}} </option>
     </select>
     <div class="card">
         <h4 class="card-header">Assement Mark Sheet</h4>

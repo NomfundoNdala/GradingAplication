@@ -707,4 +707,6 @@ export class AssigmentManagerComponent implements OnInit {
     });
   }
 
+  
+
 }

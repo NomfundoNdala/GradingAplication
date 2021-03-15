@@ -34,6 +34,13 @@ export class HomeComponent implements OnInit {
   constructor(private apiService: ApiService, private authService: AuthService, private router: Router) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
+      apiService.getAllGroups().subscribe((data) => {
+        if (data.status) {
+          //loop through data.data to get item.groupName then groupName.push(item.groupName) xD:
+          //make sure this is done as described
+        }
+        console.log(data);
+      })
       this.apiService.getAllStudents().pipe(first())
         .subscribe(
           data => {
@@ -55,6 +62,12 @@ export class HomeComponent implements OnInit {
         if (data.status) {
           //loop through data.data to get item.groupName then groupName.push(item.groupName) xD:
           //make sure this is done as described
+          for (let i = 0; i < data.data.length; i++) {
+            //const element = array[i];
+          this.groupNames.push()
+
+            
+          }
         }
         console.log(data);
       })

@@ -28,64 +28,74 @@ export class HomeComponent implements OnInit {
   error = '';
   success = ''
   loading = false;
+  loadingStudents = false;
+  foundNoStudent = true;
   dataFound = false;
   columnsToDisplay = ['groupName', 'groupId'];
-  groupsAdded :IGroup[] =[];
-  studentsInAGroup :any[] = [];
+  groupsAdded: IGroup[] = [];
+  studentsInAGroup: any[] = [];
   dataSource = new MatTableDataSource(this.groupsAdded);
   expandedElement: IGroup = this.groupsAdded[0];
   constructor(private apiService: ApiService, private authService: AuthService, private router: Router) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-        this.getGroups();
-          
+      this.getGroups();
+
     } else {
       this.router.navigateByUrl('/login');
     }
 
   }
-  clickedGroup(e:any) {
-    console.log(e);
+  clickedGroup(e: any) {
+    this.studentsInAGroup = [];
     this.getGr(e.groupId);
   }
-  ViewStudent(student: any){
+  ViewStudent(student: any) {
     console.log(student);
-    this.router.navigateByUrl('/editS/'+student.uniqueId)
+    this.router.navigateByUrl('/editS/' + student.uniqueId)
   }
   ngOnInit(): void {
     this.loading = true;
-   
-    
-  } 
-  getGroups()
-{
-  this.apiService.getAllGroups().subscribe((res)=>{
-    let data = [];
-    console.log(res.data);
-    
-    if(res.status)
-    {
-     data= res.data;
-     data.map((d :IGroup,i: number)=>{
-      this.groupsAdded.push(d);
-     })
-    }
-    this.dataFound = true;
-     this.loading = false;
-  })
-}
-  
+
+
+  }
+  getGroups() {
+    this.apiService.getAllGroups().subscribe((res) => {
+      let data = [];
+      console.log(res.data);
+
+      if (res.status) {
+        data = res.data;
+        data.map((d: IGroup, i: number) => {
+          this.groupsAdded.push(d);
+        })
+      }
+      this.dataFound = true;
+      this.loading = false;
+    })
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  getGr(el:string){
+  getGr(el: string) {
     console.log(el);
     this.studentsInAGroup = [];
-    this.apiService.getStudentInAGroup(el).subscribe((res:any) =>{
-      this.studentsInAGroup.push(res.data);
-      console.log(res);
-      
+    this.loadingStudents = true;
+    this.apiService.getStudentInAGroup(el).subscribe((res: any) => {
+      if (res.status) {
+        if (res.data) {
+          this.studentsInAGroup.push(res.data);
+          console.log(this.studentsInAGroup)
+          if (this.studentsInAGroup[0].length <= 0) {
+            this.foundNoStudent = true;
+          } else {
+            this.foundNoStudent = false;
+          }
+        }
+      }
+      this.loadingStudents = false;
     })
   }
   editClick(data: IStudent) {

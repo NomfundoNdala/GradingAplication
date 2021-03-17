@@ -21,22 +21,37 @@
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
                     <div class="example-element-detail"
                         [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        <span *ngIf="loadingStudents" class="spinner-border spinner-border-sm mr-1"></span>
                         <div *ngFor="let st of studentsInAGroup">
-                            <div *ngFor="let s of st">
-                                <span style="padding: 10px;background-color: burlywood; cursor: pointer;"
-                                    (click)="ViewStudent(s);"> {{s.name}}</span>
-                                <br />
-                            </div>
+                            <span style="font-size: 3;color: greenyellow;" *ngIf='foundNoStudent'>No students in this
+                                group</span>
+                            <table *ngIf='!foundNoStudent' class="mat-elevation-z8">
+                                <thead>
+
+                                    <th>Name</th>
+                                    <th>total mark</th>
+
+                                </thead>
+                                <tbody>
+                                    <div *ngFor="let s of st">
+                                        <tr class="example-element-row" (click)="ViewStudent(s);">
+                                            <td style="padding-right: 30px;">{{s.name}}</td>
+                                            <td>{{s.totalMark}}</td>
+                                        </tr>
+                                    </div>
+                                </tbody>
+                            </table>
                             <br />
                         </div>
+
                         <!-- <div class="editDeleteSection">
                             <button class="btn btn-primary" (click)="editClick(element)">Edit</button>
                             <button class="btn btn-danger" (click)="deleteClick(element)">Delete</button>
                         </div> -->
                         <div class="example-element-description">
                             {{element.name}}
-                            <span class="example-element-description-attribution"> -- This is where we will show
-                                assements marks </span>
+                            <!-- <span class="example-element-description-attribution"> -- This is where we will show
+                                assements marks </span> -->
                         </div>
                     </div>
                 </td>

@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 import { ApiService } from 'src/app/Services/api.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AuthService } from 'src/app/Services/auth.service';
+import { validateStrongPassowrd, validStudentNumber } from 'src/app/Helper';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,9 @@ export class LoginComponent implements OnInit {
   submitted = false;
   returnUrl!: string;
   error = '';
-  success = ''
+  success = '';
+  ValidStufNumberMessage = 'Not a valid Stuff number';
+  ValidPasswordMessage = 'Not a strong password';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -54,28 +57,37 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
+    if (validateStrongPassowrd(this.f.password.value)) {
+      this.ValidPasswordMessage = '';
+    }
 
-    this.loading = true;
-    this.apiService.login(this.f.username.value, this.f.password.value)
-      .pipe(first())
-      .subscribe(
-        data => {
-          
-          console.log(data.status);
-          if (data.status) {
-           this.authService.setUserLogged(JSON.stringify(data.data));
-            this.success = data.message;
-            this.error = '';;
-          } else {
-            this.error = data.message;
-          }
-          this.loading = false;
-        },
-        error => {
-          this.error = error;
-          this.success = '';
-          this.loading = false;
-        });
+    if (validStudentNumber(this.f.username.value)) {
+      this.ValidStufNumberMessage = '';
+    }
+    if (this.ValidPasswordMessage != '' && this.ValidStufNumberMessage != '') {
+      this.loading = true;
+      this.apiService.login(this.f.username.value, this.f.password.value)
+        .pipe(first())
+        .subscribe(
+          data => {
+            if (data.status) {
+              this.authService.setUserLogged(JSON.stringify(data.data));
+              this.success = data.message;
+              this.error = '';;
+            } else {
+              this.error = data.message;
+            }
+            this.loading = false;
+          },
+          error => {
+            this.error = error;
+            this.success = '';
+            this.loading = false;
+          });
+
+    } else {
+      this.error = 'Please fill the form with the right format details';
+    }
   }
 
 }

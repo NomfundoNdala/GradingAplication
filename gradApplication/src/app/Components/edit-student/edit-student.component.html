@@ -1,6 +1,10 @@
 <div class="col-md-6 offset-md-3 mt-5">
     <div class="card">
+          
         <h4 class="card-header">EDIT STUDENT
+            <span class="material-icons" (click)= "deleteStudent()"   style="float: right; cursor:pointer" >
+                delete
+                </span>
         </h4>
         <!-- <p style="display: inline-flex; text-align: right;">D</p> -->
         <div class="card-body">
@@ -39,7 +43,6 @@
                         <div *ngIf="f.groupName.errors?.required">Group Name is required</div>
                     </div>
                 </div>
-
                 <button [disabled]="loading" class="btn btn-primary">
                     <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                     SUBMIT

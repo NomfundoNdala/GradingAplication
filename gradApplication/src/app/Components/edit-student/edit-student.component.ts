@@ -85,9 +85,17 @@ export class EditStudentComponent implements OnInit {
       studentNumber: this.f.studentNumber.value,
       totalMark: this.recieveStudent.totalMark
     }
+   
   }
   get f() { return this.registerForm.controls; }
+  deleteStudent() {
+    this.apiService.deleteStudent(this.uniqueId).subscribe((res)=>{
+    console.log(res);
 
+    })
+    
+    this.router.navigateByUrl('/home')
+  }
   onSubmit() {
     this.submitted = true;
 

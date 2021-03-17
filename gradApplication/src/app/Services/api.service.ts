@@ -62,5 +62,11 @@ export class ApiService {
   editStudent(uniqueId: string, studEdit: UStudent) {
     return this.httpClient.patch<ApiResponse>(apiUrl + `/api/Student/updateStudent?uniqueId=${uniqueId}`, studEdit, { headers: hearders })
   }
-}
 
+  deleteStudent(uniqueId :string)
+  {
+    return this.httpClient.delete<ApiResponse>(apiUrl + `/api/Student/deleteStudentUniqueId?uniqueId=${uniqueId}`, { headers: hearders })
+  }
+  
+
+}

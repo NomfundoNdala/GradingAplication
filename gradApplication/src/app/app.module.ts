@@ -38,7 +38,7 @@ const modules = [
   BrowserAnimationsModule,
   FormsModule,
   MatToolbarModule,
-  MatListModule
+  MatListModule,
 ];
 
 @NgModule({

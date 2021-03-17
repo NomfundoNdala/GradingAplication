@@ -49,16 +49,18 @@ export class ApiService {
   // /api/Student/getStudentInAGroup?groupName=ggh
 
   getStudentInAGroup(groupId: string) {
-    return this.httpClient.get<ApiResponse>( apiUrl+`/api/Student/getStudentInAGroup?groupId=${groupId}`, { headers: hearders });
+    return this.httpClient.get<ApiResponse>(apiUrl + `/api/Student/getStudentInAGroup?groupId=${groupId}`, { headers: hearders });
   }
 
+  getGroup(groupId: string) {
+    return this.httpClient.get<ApiResponse>(apiUrl + `/api/Student/getGroup?groupId=${groupId}`, { headers: hearders });
+  }
   getStudentById(uniqueId: string) {
-    return this.httpClient.get<ApiResponse>( apiUrl+`/api/Student/getStudentUniqueId?uniqueId=${uniqueId}`, { headers: hearders });
+    return this.httpClient.get<ApiResponse>(apiUrl + `/api/Student/getStudentUniqueId?uniqueId=${uniqueId}`, { headers: hearders });
   }
 
-  editStudent(uniqueId : string , studEdit: UStudent)
-  {
-    return this.httpClient.patch<ApiResponse>(apiUrl + `/api/Student/updateStudent?uniqueId=${uniqueId}`,studEdit, { headers: hearders } )
+  editStudent(uniqueId: string, studEdit: UStudent) {
+    return this.httpClient.patch<ApiResponse>(apiUrl + `/api/Student/updateStudent?uniqueId=${uniqueId}`, studEdit, { headers: hearders })
   }
 }
 

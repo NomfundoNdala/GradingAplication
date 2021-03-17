@@ -5,3 +5,8 @@ export interface ILecturer {
   email: string,
   password: string
 }
+
+export interface Group{
+  groupName : string,
+  groupId: string
+}

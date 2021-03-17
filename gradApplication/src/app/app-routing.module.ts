@@ -6,6 +6,10 @@ import { LoginComponent } from './Components/login/login.component';
 import { RegisterComponent } from './Components/register/register.component';
 import { StudentComponent } from './Components/student/student.component';
 import {LecturerComponent} from './Components/lecturer/lecturer.component';
+import { GroupComponent } from './Components/group/group.component';
+import { EditStudentComponent } from './components/edit-student/edit-student.component';
+
+
 
 
 
@@ -16,6 +20,8 @@ const routes: Routes = [
   { path: 'student', component: StudentComponent },
   { path: 'home', component: HomeComponent },
   { path: 'lecturer', component: LecturerComponent },
+ { path: 'group', component: GroupComponent }, 
+ { path: 'editS/:id', component: EditStudentComponent },
   { path: 'assignment', component: AssigmentManagerComponent }];
 
 @NgModule({

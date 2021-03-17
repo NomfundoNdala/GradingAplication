@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { promise } from 'selenium-webdriver';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse, ILoggedUserData } from '../Interfaces/Iauth';
+import { UStudent } from '../Interfaces/Student';
 var apiUrl: string = "";
 var hearders: any = "";
 const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhIjoiZTQxYWUwMmItNDg2YS00MDllLTk0NDYtZjBkNmNhMTE1Yzc4IiwiZXhwIjoxNjIwNTI0ODcwLCJJc0xlY3R1cmUiOnRydWV9.P7Aa0twdUilKo0IBPc5BTZ0qI6sdHh-sSm2AxnNnljM";
@@ -10,6 +11,8 @@ var LoggedUserData: ILoggedUserData = { jwt: token, name: '', stuffNumber: '', s
   providedIn: 'root'
 })
 export class ApiService {
+
+  studEdit!: UStudent;
   constructor(private httpClient: HttpClient) {
     apiUrl = "https://gradingsystemapi20210307145917.azurewebsites.net";
     this.getLoggedUserData();
@@ -22,7 +25,8 @@ export class ApiService {
     }
     hearders = new HttpHeaders().set(
       "Authorization", 'Bearer ' + LoggedUserData.jwt
-    );
+    ).set('Content-Type', 'application/json');
+
     return hearders;
   }
 
@@ -41,4 +45,20 @@ export class ApiService {
 
     return this.httpClient.get<ApiResponse>(apiUrl + `/api/Student/getStudent?studentNumber=${studentNumber}`, { headers: hearders });
   }
+
+  // /api/Student/getStudentInAGroup?groupName=ggh
+
+  getStudentInAGroup(groupId: string) {
+    return this.httpClient.get<ApiResponse>( apiUrl+`/api/Student/getStudentInAGroup?groupId=${groupId}`, { headers: hearders });
+  }
+
+  getStudentById(uniqueId: string) {
+    return this.httpClient.get<ApiResponse>( apiUrl+`/api/Student/getStudentUniqueId?uniqueId=${uniqueId}`, { headers: hearders });
+  }
+
+  editStudent(uniqueId : string , studEdit: UStudent)
+  {
+    return this.httpClient.patch<ApiResponse>(apiUrl + `/api/Student/updateStudent?uniqueId=${uniqueId}`,studEdit, { headers: hearders } )
+  }
 }
+

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ILecturer } from '../Interfaces/lecturer';
+import { Group, ILecturer } from '../Interfaces/lecturer';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -15,4 +15,10 @@ export class LecturerService {
   createLecturer(lecturer: ILecturer) {
     return this.httpClient.post(this.apiUrl + '/api/Lecture/create', lecturer, { headers: this.apiService.getLoggedUserData() });
   }
+
+  createGroup(group :Group) {
+    return this.httpClient.post(this.apiUrl + '/api/Lecture/CreateGroup', group, { headers: this.apiService.getLoggedUserData() });
+  }
+  
+  
 }

@@ -24,3 +24,9 @@ export interface submitAssigmentDTO {
     data: Assigment,
     groupName: string
 }
+
+export interface UAssigment{
+  assigmentId: string,
+  groupName: string,
+  data:any
+}

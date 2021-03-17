@@ -14,21 +14,32 @@ export class NavBarComponent implements OnInit {
   isUserLoggedIn = false;
 
   constructor(private authService : AuthService, private router: Router) {
-    if (authService.getIsUserLoggedIn()) {
+ 
+    this.checkUserIsLogged();
+    setTimeout(() =>{
+      this.checkUserIsLogged();
+    } , 10000)
+
+   }
+
+   checkUserIsLogged(){
+    if (this.authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-      this.isAdmin = authService.getIsAdmin();
+      this.isAdmin = this.authService.getIsAdmin();
       console.log(this.isAdmin);
-      let userInformation = authService.getUserInfo();
+      let userInformation = this.authService.getUserInfo();
       if(userInformation){
         this.user = userInformation;
         this.userLoggedName = userInformation.name;
       }
     }
-
    }
-
   ngOnInit(): void {
 
+  }
+  goHome()
+  {
+    this.router.navigateByUrl('/home');
   }
 
   addLecturer()

@@ -20,8 +20,8 @@ const routes: Routes = [
   { path: 'student', component: StudentComponent },
   { path: 'home', component: HomeComponent },
   { path: 'lecturer', component: LecturerComponent },
- { path: 'group', component: GroupComponent }, 
- { path: 'editS/:id', component: EditStudentComponent },
+  { path: 'group', component: GroupComponent }, 
+  { path: 'editS/:id', component: EditStudentComponent },
   { path: 'assignment', component: AssigmentManagerComponent }];
 
 @NgModule({

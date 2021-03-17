@@ -97,7 +97,7 @@ this.lecturer = {
         this.error = '';
 
         //why do you route back to home after a student has been registered ???
-        this.router.navigateByUrl('/login');
+        this.router.navigateByUrl('/home');
         
        
 

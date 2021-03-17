@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
   ) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-      
+      this.router.navigateByUrl('/home')
     }
   }
 
@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
     });
 
     // get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   get f() { return this.loginForm.controls; }
@@ -61,13 +61,11 @@ export class LoginComponent implements OnInit {
       .subscribe(
         data => {
           
-          console.log(data);
+          console.log(data.status);
           if (data.status) {
-            localStorage.setItem('userInfo', JSON.stringify(data.data));
+           this.authService.setUserLogged(JSON.stringify(data.data));
             this.success = data.message;
-            this.error = '';
-            //this.router.navigateByUrl('/home');
-            this.router.navigate(['/home']);
+            this.error = '';;
           } else {
             this.error = data.message;
           }

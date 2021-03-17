@@ -37,24 +37,6 @@ export class HomeComponent implements OnInit {
   constructor(private apiService: ApiService, private authService: AuthService, private router: Router) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-     
-      // this.apiService.getAllStudents().pipe(first())
-      //   .subscribe(
-      //     data => {
-      //       if (data.status) {
-      //         this.dataSource = new MatTableDataSource(data.data);
-      //         console.log(this.dataSource, 'data')
-      //         this.success = data.message;
-      //       } else {
-      //         this.error = data.message;
-      //       }
-      //       this.dataFound = true;
-      //       this.loading = false;
-      //     },
-      //     error => {
-      //       this.error = error;
-      //       this.loading = false;
-      //     });
         this.getGroups();
           
     } else {

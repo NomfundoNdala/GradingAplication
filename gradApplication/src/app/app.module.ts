@@ -19,6 +19,8 @@ import { NavBarComponent } from './Components/nav-bar/nav-bar.component';
 import { GroupComponent } from './Components/group/group.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { EditStudentComponent } from './components/edit-student/edit-student.component';
+import { FooterComponent } from './components/footer/footer.component';
+
 // import { GroupComponent } from './components/group/group.component';
 
 
@@ -48,7 +50,8 @@ const modules = [
     NavBarComponent,
     GroupComponent,
     ReportsComponent,
-    EditStudentComponent
+    EditStudentComponent,
+    FooterComponent
   ],
   imports: [...modules],
   exports: [...modules],

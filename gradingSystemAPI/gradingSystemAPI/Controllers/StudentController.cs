@@ -47,7 +47,7 @@ namespace gradingSystemAPI.Controllers
             if (!claims.IsValidLogin())
                 return claims.Get401Result();
             if (string.IsNullOrEmpty(studentNumber))
-                return BadRequest(new { status = true, message = "student Number cannot be null or empty", data = studentNumber });
+                return Ok(new { status = true, message = "student Number cannot be null or empty", data = studentNumber });
 
             if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
 
@@ -64,7 +64,7 @@ namespace gradingSystemAPI.Controllers
             if (!claims.IsValidLogin())
                 return claims.Get401Result();
             if (string.IsNullOrEmpty(uniqueId))
-                return BadRequest(new { status = true, message = "student Number cannot be null or empty", data = uniqueId });
+                return Ok(new { status = false, message = "student Number cannot be null or empty", data = uniqueId });
 
             if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
 
@@ -81,7 +81,7 @@ namespace gradingSystemAPI.Controllers
             if (!claims.IsValidLogin())
                 return claims.Get401Result();
             if (string.IsNullOrEmpty(uniqueId))
-                return BadRequest(new { status = true, message = "student Number cannot be null or empty", data = uniqueId });
+                return Ok(new { status = true, message = "student Number cannot be null or empty", data = uniqueId });
 
             if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
 
@@ -102,13 +102,13 @@ namespace gradingSystemAPI.Controllers
             var exixstinStudent = await _mongoRepositoryStudents.FindOneAsync(x => x.StudentNumber.Equals(newStudents.StudentNumber));
             if (exixstinStudent != null)
             {
-                return BadRequest(new { status = false, message = "Students already exist", data = "" });
+                return Ok(new { status = false, message = "Students already exist", data = "" });
             }
 
             var nameOfTheGroup = CheckIfGroupExist(newStudents.Groupname);
             if (string.IsNullOrEmpty(nameOfTheGroup.Item1))
             {
-                return BadRequest(new { status = false, message = $"Students Group {newStudents.Groupname} does not exist", data = "" });
+                return Ok(new { status = false, message = $"Students Group {newStudents.Groupname} does not exist", data = "" });
             }
             var student = new Students()
             {
@@ -136,7 +136,7 @@ namespace gradingSystemAPI.Controllers
                 return claims.Get401Result();
 
             if (string.IsNullOrEmpty(groupId))
-                return BadRequest(new { status = true, message = "groupName cannot be null or empty", data = groupId });
+                return BadRequest(new { status = false, message = "groupName cannot be null or empty", data = groupId });
 
             if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
 
@@ -148,6 +148,30 @@ namespace gradingSystemAPI.Controllers
 
             var allstudentsInAGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupName.Equals(gr.GroupName));
             return Ok(new { status = true, message = "successful request", data = allstudentsInAGroup });
+        }
+
+        [HttpGet]
+        [Route("getGroup")]
+        public async Task<IActionResult> GetGroup(string groupId)
+        {
+            var claims = Request.GetJwtClaims();
+
+            if (!claims.IsValidLogin())
+                return claims.Get401Result();
+
+            if (string.IsNullOrEmpty(groupId))
+                return Ok(new { status = false, message = "groupName cannot be null or empty", data = groupId });
+
+            if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
+
+            var gr = await _mongoRepositoryGroup.FindOneAsync(x => x.GroupId.Equals(groupId));
+            if (gr == null)
+            {
+                return Ok(new { status = false, message = "Group not found", data = groupId });
+            }
+
+            //var allstudentsInAGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupName.Equals(gr.GroupName));
+            return Ok(new { status = true, message = "successful request", data = gr });
         }
 
         [HttpPatch]
@@ -162,7 +186,7 @@ namespace gradingSystemAPI.Controllers
             if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
 
             if (string.IsNullOrEmpty(uniqueId))
-                return BadRequest(new { status = true, message = "uniqueId cannot be null or empty", data = uniqueId });
+                return Ok(new { status = false, message = "uniqueId cannot be null or empty", data = uniqueId });
 
             var studentOld = _mongoRepositoryStudents.FindOne(x => x.UniqueId.Equals(uniqueId));
 
@@ -191,25 +215,33 @@ namespace gradingSystemAPI.Controllers
             var nameOfTheGroup = CheckIfGroupExist(data.GroupName);
             if (string.IsNullOrEmpty(nameOfTheGroup.Item1))
             {
-                return BadRequest(new { status = false, message = $"Students Group {data.GroupName} does not exist", data = "" });
+                return Ok(new { status = false, message = $"Students Group {data.GroupName} does not exist", data = "" });
             }
 
             var foundAssigment = await _mongoRepositoryAssigment.FindOneAsync(x => x.Name.Equals(data.Data.Name));
-
+            var asgmnt = new Assignment();
             if (foundAssigment != null)
             {
-                return BadRequest(new { status = false, message = $"Assigment {data.Data.Name} already marked", data = "" });
-            }
+                asgmnt.AssigmentId = foundAssigment.AssigmentId;
+                asgmnt.GroupName = foundAssigment.GroupName;
+                asgmnt.MainTitle = data.Data.MainTitle;
+                asgmnt.Name = data.Data.Name;
+                asgmnt.Total = data.Data.Total;
+                asgmnt.Weight = data.Data.Weight;
+                asgmnt.Id = foundAssigment.Id;
 
-            var asgmnt = new Assignment()
+                await _mongoRepositoryAssigment.ReplaceOneAsync(asgmnt);
+            }
+            else
             {
-                AssigmentId = Guid.NewGuid().ToString(),
-                GroupName = nameOfTheGroup.Item1,
-                MainTitle = data.Data.MainTitle,
-                Name = data.Data.Name,
-                Total = data.Data.Total,
-                Weight = data.Data.Weight
-            };
+                asgmnt.AssigmentId = Guid.NewGuid().ToString();
+                asgmnt.GroupName = nameOfTheGroup.Item1;
+                asgmnt.MainTitle = data.Data.MainTitle;
+                asgmnt.Name = data.Data.Name;
+                asgmnt.Total = data.Data.Total;
+                asgmnt.Weight = data.Data.Weight;
+                await _mongoRepositoryAssigment.InsertOneAsync(asgmnt);
+            }
             var learnerMarkTotal = 0;
 
             foreach (var c in asgmnt.MainTitle)
@@ -222,7 +254,15 @@ namespace gradingSystemAPI.Controllers
             var studentOfThisGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupId.Equals(nameOfTheGroup.Item2)).ToList();
             foreach (var stud in studentOfThisGroup)
             {
-                stud.Assignments.Add(asgmnt);
+                var newAssigmentList = stud.Assignments;
+                for (var i = 0; i < newAssigmentList.Count; i++)
+                {
+                    if (newAssigmentList[i].Name.Equals(asgmnt.Name))
+                    {
+                        newAssigmentList[i] = asgmnt;
+                    }
+                }
+                stud.Assignments = newAssigmentList;
                 stud.TotalMark = grTotal.ToString();
                 await _mongoRepositoryStudents.ReplaceOneAsync(stud);
             }
@@ -231,7 +271,7 @@ namespace gradingSystemAPI.Controllers
             gr.Assignemts.Add(asgmnt);
 
             await _mongoRepositoryGroup.ReplaceOneAsync(gr);
-            await _mongoRepositoryAssigment.InsertOneAsync(asgmnt);
+
 
             return Ok(new { status = true, message = "successful request", data = asgmnt });
         }
@@ -243,19 +283,19 @@ namespace gradingSystemAPI.Controllers
         {
 
             if (string.IsNullOrEmpty(data.GroupName))
-                return BadRequest(new { status = true, message = "GroupName cannot be null or empty", data = data });
+                return Ok(new { status = false, message = "GroupName cannot be null or empty", data = data });
 
             var nameOfTheGroup = CheckIfGroupExist(data.GroupName);
             if (string.IsNullOrEmpty(nameOfTheGroup.Item1))
             {
-                return BadRequest(new { status = false, message = $"Students Group {data.AssigmentId} does not exist", data = "" });
+                return Ok(new { status = false, message = $"Students Group {data.AssigmentId} does not exist", data = "" });
             }
 
             var foundAssigment = await _mongoRepositoryAssigment.FindOneAsync(x => x.AssigmentId.Equals(data.AssigmentId));
 
             if (foundAssigment == null)
             {
-                return BadRequest(new { status = false, message = $"Assigment {data.Data.Name} not found", data = "" });
+                return Ok(new { status = false, message = $"Assigment {data.Data.Name} not found", data = "" });
             }
 
             foundAssigment.Total = data.Data.Total;
@@ -325,7 +365,7 @@ namespace gradingSystemAPI.Controllers
         {
 
             if (string.IsNullOrEmpty(uniqueId))
-                return BadRequest(new { status = true, message = "GroupName cannot be null or empty", data = data });
+                return Ok(new { status = false, message = "GroupName cannot be null or empty", data = data });
 
 
             var student = await _mongoRepositoryStudents.FindOneAsync(x => x.UniqueId.Equals(uniqueId));

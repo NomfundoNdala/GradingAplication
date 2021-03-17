@@ -63,7 +63,7 @@ namespace gradingSystemAPI.Controllers
                 _mongoRepositoryAccountDetails.FindOneAsync(x => x.Username.Equals(newLecture.StuffNumber));
             if (exixstinDoctor != null)
             {
-                return BadRequest(new { status = false, message = "Account already exist", data = exixstinDoctor });
+                return Ok(new { status = false, message = "Account already exist", data = exixstinDoctor });
             }
             var lecture = new Lecture()
             {
@@ -138,7 +138,7 @@ namespace gradingSystemAPI.Controllers
                 return claims.Get401Result();
 
             if (string.IsNullOrEmpty(accountId))
-                return BadRequest(new { status = true, message = "account id cannot be null or empty", data = accountId });
+                return Ok(new { status = false, message = "account id cannot be null or empty", data = accountId });
 
 
             if (claims.IsLecture || claims.Admin)
@@ -230,8 +230,8 @@ namespace gradingSystemAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest(new
-                    { status = true, message = $"Group name {@group.GroupName} already exist", data = @group });
+                    return Ok(new
+                    { status = false, message = $"Group name {@group.GroupName} already exist", data = @group });
                 }
             }
             return Ok(new { status = false, message = "Request to be performed by a lecture or admin ", data = "" });
@@ -248,7 +248,7 @@ namespace gradingSystemAPI.Controllers
             var details = _mongoRepositoryGroup.AsQueryable().ToList();
             if (details == null)
             {
-                return BadRequest(new { status = false, message = "account id cannot be null or empty", data = "" });
+                return Ok(new { status = false, message = "account id cannot be null or empty", data = "" });
             }
             return Ok(new { status = true, message = "successful request", data = details });
         }

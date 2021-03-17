@@ -50,6 +50,11 @@ export class HomeComponent implements OnInit {
     this.studentsInAGroup = [];
     this.getGr(e.groupId);
   }
+
+  GroupToMark(e: any) {
+    console.log(e);
+    this.router.navigateByUrl('group/' + e.groupId);
+  }
   ViewStudent(student: any) {
     console.log(student);
     this.router.navigateByUrl('/editS/' + student.uniqueId)

@@ -484,7 +484,7 @@ const Assigment4: Assigment = {
   ],
   total: 80,
   name: 'Assigment4',
-  weight: 13
+  weight: 20
 }
 
 const Assigment5: Assigment = {
@@ -595,9 +595,9 @@ const Assigment5: Assigment = {
   },
 
   ],
-  total: 135,
+  total: 130,
   name: 'Assigment5',
-  weight: 13
+  weight: 50
 }
 
 
@@ -638,14 +638,13 @@ export class AssigmentManagerComponent implements OnInit {
       apiService.getGroup(id).subscribe((res) => {
         console.log(res)
         if (res.status) {
-          console.log(res.data);
+         
           var groupData = res.data;
           this.groupName = res.data.groupName;
           var groupAssignment: Assigment[] = groupData.assignemts;
           var newTemplate: Assigment[] = choosenTemplate;
           groupAssignment.forEach((ass) => {
             for (var x = 0; x < choosenTemplate.length; x++) {
-
               if (ass.name == choosenTemplate[x].name) {
                 var newAss: Assigment = {
                   mainTitle: ass.mainTitle,

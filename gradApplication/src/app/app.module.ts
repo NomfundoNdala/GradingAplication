@@ -20,7 +20,8 @@ import { GroupComponent } from './Components/group/group.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { EditStudentComponent } from './components/edit-student/edit-student.component';
 import { FooterComponent } from './components/footer/footer.component';
-
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
 // import { GroupComponent } from './components/group/group.component';
 
 
@@ -35,7 +36,9 @@ const modules = [
   HttpClientModule,
   MatTableModule,
   BrowserAnimationsModule,
-  FormsModule
+  FormsModule,
+  MatToolbarModule,
+  MatListModule
 ];
 
 @NgModule({

@@ -55,6 +55,45 @@ namespace gradingSystemAPI.Controllers
             return Ok(new { status = true, message = "successful request", data = st });
         }
 
+        [HttpGet]
+        [Route("getStudentUniqueId")]
+        public async Task<IActionResult> GetStudentUniqueId(string uniqueId)
+        {
+            var claims = Request.GetJwtClaims();
+
+            if (!claims.IsValidLogin())
+                return claims.Get401Result();
+            if (string.IsNullOrEmpty(uniqueId))
+                return BadRequest(new { status = true, message = "student Number cannot be null or empty", data = uniqueId });
+
+            if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
+
+            var st = await _mongoRepositoryStudents.FindOneAsync(x => x.UniqueId.Equals(uniqueId));
+            return Ok(st == null ? new { status = false, message = "Student does not exist", data = st } : new { status = true, message = "successful request", data = st });
+        }
+
+        [HttpDelete]
+        [Route("deleteStudentUniqueId")]
+        public async Task<IActionResult> DeleteStudentUniqueId(string uniqueId)
+        {
+            var claims = Request.GetJwtClaims();
+
+            if (!claims.IsValidLogin())
+                return claims.Get401Result();
+            if (string.IsNullOrEmpty(uniqueId))
+                return BadRequest(new { status = true, message = "student Number cannot be null or empty", data = uniqueId });
+
+            if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
+
+            var st = await _mongoRepositoryStudents.FindOneAsync(x => x.UniqueId.Equals(uniqueId));
+            if (st == null)
+            {
+                return Ok(new { status = false, message = "Student does not exist", data = st });
+            }
+
+            await _mongoRepositoryStudents.DeleteOneAsync(x => x.UniqueId.Equals(uniqueId));
+            return Ok(new { status = true, message = "successful request", data = st });
+        }
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] StudentDto newStudents)
@@ -67,13 +106,14 @@ namespace gradingSystemAPI.Controllers
             }
 
             var nameOfTheGroup = CheckIfGroupExist(newStudents.Groupname);
-            if (string.IsNullOrEmpty(CheckIfGroupExist(nameOfTheGroup)))
+            if (string.IsNullOrEmpty(nameOfTheGroup.Item1))
             {
                 return BadRequest(new { status = false, message = $"Students Group {newStudents.Groupname} does not exist", data = "" });
             }
             var student = new Students()
             {
-                GroupName = nameOfTheGroup,
+                GroupName = nameOfTheGroup.Item1,
+                GroupId = nameOfTheGroup.Item2,
                 Name = newStudents.Name,
                 StudentNumber = newStudents.StudentNumber,
                 TotalMark = "0",
@@ -88,19 +128,25 @@ namespace gradingSystemAPI.Controllers
 
         [HttpGet]
         [Route("getStudentInAGroup")]
-        public IActionResult GetStudentInAGroup(string groupName)
+        public async Task<IActionResult> GetStudentInAGroup(string groupId)
         {
             var claims = Request.GetJwtClaims();
 
             if (!claims.IsValidLogin())
                 return claims.Get401Result();
 
-            if (string.IsNullOrEmpty(groupName))
-                return BadRequest(new { status = true, message = "groupName cannot be null or empty", data = groupName });
+            if (string.IsNullOrEmpty(groupId))
+                return BadRequest(new { status = true, message = "groupName cannot be null or empty", data = groupId });
 
             if (!claims.IsLecture) return Ok(new { status = false, message = "Request to be done by Lecture", data = "" });
 
-            var allstudentsInAGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupName.Equals(groupName.ToLower()));
+            var gr = await _mongoRepositoryGroup.FindOneAsync(x => x.GroupId.Equals(groupId));
+            if (gr == null)
+            {
+                return Ok(new { status = false, message = "Group not found", data = groupId });
+            }
+
+            var allstudentsInAGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupName.Equals(gr.GroupName));
             return Ok(new { status = true, message = "successful request", data = allstudentsInAGroup });
         }
 
@@ -143,7 +189,7 @@ namespace gradingSystemAPI.Controllers
                 return BadRequest(new { status = true, message = "GroupName cannot be null or empty", data = data.GroupName });
 
             var nameOfTheGroup = CheckIfGroupExist(data.GroupName);
-            if (string.IsNullOrEmpty(nameOfTheGroup))
+            if (string.IsNullOrEmpty(nameOfTheGroup.Item1))
             {
                 return BadRequest(new { status = false, message = $"Students Group {data.GroupName} does not exist", data = "" });
             }
@@ -158,36 +204,182 @@ namespace gradingSystemAPI.Controllers
             var asgmnt = new Assignment()
             {
                 AssigmentId = Guid.NewGuid().ToString(),
-                GroupName = nameOfTheGroup,
+                GroupName = nameOfTheGroup.Item1,
                 MainTitle = data.Data.MainTitle,
                 Name = data.Data.Name,
                 Total = data.Data.Total,
                 Weight = data.Data.Weight
             };
-            var studentOfThisGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupName.Equals(nameOfTheGroup)).ToList();
+            var learnerMarkTotal = 0;
+
+            foreach (var c in asgmnt.MainTitle)
+            {
+                learnerMarkTotal += Convert.ToInt32(c.Content.LearnerMark);
+            }
+
+            var grTotal = ((learnerMarkTotal / Convert.ToInt32(asgmnt.Total)) * 100) * (asgmnt.Weight / 100);
+
+            var studentOfThisGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupId.Equals(nameOfTheGroup.Item2)).ToList();
             foreach (var stud in studentOfThisGroup)
             {
                 stud.Assignments.Add(asgmnt);
+                stud.TotalMark = grTotal.ToString();
                 await _mongoRepositoryStudents.ReplaceOneAsync(stud);
             }
+
+            var gr = await _mongoRepositoryGroup.FindOneAsync(x => x.GroupId.Equals(nameOfTheGroup.Item2));
+            gr.Assignemts.Add(asgmnt);
+
+            await _mongoRepositoryGroup.ReplaceOneAsync(gr);
             await _mongoRepositoryAssigment.InsertOneAsync(asgmnt);
 
             return Ok(new { status = true, message = "successful request", data = asgmnt });
         }
 
-        private string CheckIfGroupExist(string grpName)
+
+        [HttpPatch]
+        [Route("UpdateAssigment")]
+        public async Task<IActionResult> UpdateAssigment([FromBody] AssignmentUpdateDTO data)
+        {
+
+            if (string.IsNullOrEmpty(data.GroupName))
+                return BadRequest(new { status = true, message = "GroupName cannot be null or empty", data = data });
+
+            var nameOfTheGroup = CheckIfGroupExist(data.GroupName);
+            if (string.IsNullOrEmpty(nameOfTheGroup.Item1))
+            {
+                return BadRequest(new { status = false, message = $"Students Group {data.AssigmentId} does not exist", data = "" });
+            }
+
+            var foundAssigment = await _mongoRepositoryAssigment.FindOneAsync(x => x.AssigmentId.Equals(data.AssigmentId));
+
+            if (foundAssigment == null)
+            {
+                return BadRequest(new { status = false, message = $"Assigment {data.Data.Name} not found", data = "" });
+            }
+
+            foundAssigment.Total = data.Data.Total;
+            foundAssigment.MainTitle = data.Data.MainTitle;
+            foundAssigment.Weight = data.Data.Weight;
+            foundAssigment.Name = foundAssigment.Name;
+
+            await _mongoRepositoryAssigment.ReplaceOneAsync(foundAssigment);
+
+
+            var gr = await _mongoRepositoryGroup.FindOneAsync(x => x.GroupId.Equals(nameOfTheGroup.Item2));
+            var oldAssignents = new List<Assignment>();
+            foreach (var ass in gr.Assignemts)
+            {
+                if (ass.AssigmentId != null && ass.AssigmentId.Equals(foundAssigment.AssigmentId))
+                {
+                    ass.MainTitle = data.Data.MainTitle;
+                    ass.Total = data.Data.Total;
+                    ass.Weight = data.Data.Weight;
+                    ass.Name = data.Data.Name;
+                }
+                oldAssignents.Add(ass);
+            }
+            gr.Assignemts = oldAssignents;
+            await _mongoRepositoryGroup.ReplaceOneAsync(gr);
+
+
+
+            var studentOfThisGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupId.Equals(nameOfTheGroup.Item2)).ToList();
+
+            foreach (var stud in studentOfThisGroup)
+            {
+                var oldAssigmentStud = new List<Assignment>();
+                var studTotal = 0;
+                foreach (var studAss in stud.Assignments)
+                {
+
+                    if (studAss.AssigmentId != null && studAss.AssigmentId.Equals(foundAssigment.AssigmentId))
+                    {
+                        studAss.MainTitle = data.Data.MainTitle;
+                        studAss.Total = data.Data.Total;
+                        studAss.Weight = data.Data.Weight;
+                        studAss.Name = data.Data.Name;
+                    }
+                    oldAssigmentStud.Add(studAss);
+                    var learnerMarkTotal = 0;
+                    foreach (var c in studAss.MainTitle)
+                    {
+                        learnerMarkTotal += Convert.ToInt32(c.Content.LearnerMark);
+                    }
+                    var grTotal = ((learnerMarkTotal / Convert.ToInt32(studAss.Total)) * 100) * (studAss.Weight / 100);
+                    studTotal += grTotal;
+                }
+
+                stud.Assignments = oldAssigmentStud;
+                stud.TotalMark = studTotal.ToString();
+                await _mongoRepositoryStudents.ReplaceOneAsync(stud);
+            }
+
+            return Ok(new { status = true, message = "successful request", data = foundAssigment });
+        }
+
+
+        [HttpPatch]
+        [Route("UpdateAssigmentStudent")]
+        public async Task<IActionResult> UpdateAssigmentStudent([FromBody] AssignmentUpdateDTO data, string uniqueId)
+        {
+
+            if (string.IsNullOrEmpty(uniqueId))
+                return BadRequest(new { status = true, message = "GroupName cannot be null or empty", data = data });
+
+
+            var student = await _mongoRepositoryStudents.FindOneAsync(x => x.UniqueId.Equals(uniqueId));
+
+            if (student == null)
+            {
+                return BadRequest(new { status = false, message = $"Student with {uniqueId} not found", data = "" });
+            }
+
+            var oldAssigmentStud = new List<Assignment>();
+            var studTotal = 0;
+            foreach (var studAss in student.Assignments)
+            {
+
+                if (studAss.AssigmentId != null && studAss.AssigmentId.Equals(data.AssigmentId))
+                {
+                    studAss.MainTitle = data.Data.MainTitle;
+                    studAss.Total = data.Data.Total;
+                    studAss.Weight = data.Data.Weight;
+                    studAss.Name = data.Data.Name;
+                }
+                oldAssigmentStud.Add(studAss);
+                var learnerMarkTotal = 0;
+                foreach (var c in studAss.MainTitle)
+                {
+                    learnerMarkTotal += Convert.ToInt32(c.Content.LearnerMark);
+                }
+                var grTotal = ((learnerMarkTotal / Convert.ToInt32(studAss.Total)) * 100) * (studAss.Weight / 100);
+                studTotal += grTotal;
+            }
+
+            student.Assignments = oldAssigmentStud;
+            student.TotalMark = studTotal.ToString();
+            await _mongoRepositoryStudents.ReplaceOneAsync(student);
+
+
+            return Ok(new { status = true, message = "successful request", data = student });
+        }
+
+        private (string, string) CheckIfGroupExist(string grpName)
         {
             var g = string.Empty;
+            var i = string.Empty;
             var groups = _mongoRepositoryGroup.AsQueryable().ToList();
             foreach (var group in groups)
             {
                 if (group.GroupName.ToLower().Equals(grpName.ToLower()))
                 {
                     g = group.GroupName;
+                    i = group.GroupId;
                 }
             }
 
-            return g;
+            return (g, i);
         }
     }
 }

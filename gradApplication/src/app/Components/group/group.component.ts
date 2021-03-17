@@ -42,11 +42,10 @@ export class GroupComponent implements OnInit {
   ngOnInit(): void {
     this.groupForm = this.formBuilder.group({
       groupName: ['', Validators.required],
-      groupId: [this.newGuid(), Validators.required],
+      groupId: [{value:this.newGuid() , disabled:true}, Validators.required],
     });
 
     this.group = {
-    
       groupName:  this.f.groupName.value,
       groupId:  this.f.groupId.value,
     }

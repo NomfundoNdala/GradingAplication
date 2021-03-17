@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
   ) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-      this.router.navigateByUrl('/home');
+      
     }
   }
 
@@ -60,12 +60,14 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
+          
           console.log(data);
           if (data.status) {
             localStorage.setItem('userInfo', JSON.stringify(data.data));
             this.success = data.message;
             this.error = '';
-            this.router.navigateByUrl('/home');
+            //this.router.navigateByUrl('/home');
+            this.router.navigate(['/home']);
           } else {
             this.error = data.message;
           }

@@ -16,6 +16,10 @@ import { StudentComponent } from './Components/student/student.component';
 import { AssigmentManagerComponent } from './Components/Assigment/assigment-manager/assigment-manager.component';
 import { LecturerComponent } from './Components/lecturer/lecturer.component';
 import { NavBarComponent } from './Components/nav-bar/nav-bar.component';
+import { GroupComponent } from './Components/group/group.component';
+import { ReportsComponent } from './components/reports/reports.component';
+import { EditStudentComponent } from './components/edit-student/edit-student.component';
+// import { GroupComponent } from './components/group/group.component';
 
 
 
@@ -41,7 +45,10 @@ const modules = [
     StudentComponent,
     AssigmentManagerComponent,
     LecturerComponent,
-    NavBarComponent
+    NavBarComponent,
+    GroupComponent,
+    ReportsComponent,
+    EditStudentComponent
   ],
   imports: [...modules],
   exports: [...modules],

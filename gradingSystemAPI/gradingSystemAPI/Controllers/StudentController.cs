@@ -110,6 +110,9 @@ namespace gradingSystemAPI.Controllers
             {
                 return Ok(new { status = false, message = $"Students Group {newStudents.Groupname} does not exist", data = "" });
             }
+
+            var groupdata = await _mongoRepositoryGroup.FindOneAsync(x => x.GroupId.Equals(nameOfTheGroup.Item2));
+            var newAssigment = new List<Assignment>() { };
             var student = new Students()
             {
                 GroupName = nameOfTheGroup.Item1,
@@ -119,7 +122,7 @@ namespace gradingSystemAPI.Controllers
                 TotalMark = "0",
                 Surname = newStudents.Surname,
                 UniqueId = Guid.NewGuid().ToString(),
-                Assignments = new List<Assignment>()
+                Assignments = (groupdata.Assignemts != newAssigment) ? groupdata.Assignemts : newAssigment
             };
             await _mongoRepositoryStudents.InsertOneAsync(student);
 
@@ -170,7 +173,6 @@ namespace gradingSystemAPI.Controllers
                 return Ok(new { status = false, message = "Group not found", data = groupId });
             }
 
-            //var allstudentsInAGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupName.Equals(gr.GroupName));
             return Ok(new { status = true, message = "successful request", data = gr });
         }
 
@@ -215,10 +217,10 @@ namespace gradingSystemAPI.Controllers
             var nameOfTheGroup = CheckIfGroupExist(data.GroupName);
             if (string.IsNullOrEmpty(nameOfTheGroup.Item1))
             {
-                return Ok(new { status = false, message = $"Students Group {data.GroupName} does not exist", data = "" });
+                return Ok(new { status = false, message = $"Students Group {data.GroupName} does not exist", data = nameOfTheGroup });
             }
 
-            var foundAssigment = await _mongoRepositoryAssigment.FindOneAsync(x => x.Name.Equals(data.Data.Name));
+            var foundAssigment = await _mongoRepositoryAssigment.FindOneAsync(x => x.AssigmentId.Equals(data.Data.AssigmentId));
             var asgmnt = new Assignment();
             if (foundAssigment != null)
             {
@@ -242,35 +244,60 @@ namespace gradingSystemAPI.Controllers
                 asgmnt.Weight = data.Data.Weight;
                 await _mongoRepositoryAssigment.InsertOneAsync(asgmnt);
             }
-            var learnerMarkTotal = 0;
 
-            foreach (var c in asgmnt.MainTitle)
+            var gr = await _mongoRepositoryGroup.FindOneAsync(x => x.GroupName.Equals(nameOfTheGroup.Item1));
+            var isAssigmentFound = false;
+            var newMakeOfAssignment = new List<Assignment>() { };
+            if (gr.Assignemts != newMakeOfAssignment)
             {
-                learnerMarkTotal += Convert.ToInt32(c.Content.LearnerMark);
+                newMakeOfAssignment = gr.Assignemts;
+                for (var i = 0; i < newMakeOfAssignment.Count; i++)
+                {
+                    var assigmentId = newMakeOfAssignment[i].AssigmentId;
+                    if (assigmentId != null && assigmentId.Equals(asgmnt.AssigmentId))
+                    {
+                        isAssigmentFound = true;
+                        newMakeOfAssignment[i] = asgmnt;
+                    }
+                }
             }
 
-            var grTotal = ((learnerMarkTotal / Convert.ToInt32(asgmnt.Total)) * 100) * (asgmnt.Weight / 100);
+            if (!isAssigmentFound)
+            {
+                newMakeOfAssignment.Add(asgmnt);
+            }
 
-            var studentOfThisGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupId.Equals(nameOfTheGroup.Item2)).ToList();
+            gr.Assignemts = newMakeOfAssignment;
+            await _mongoRepositoryGroup.ReplaceOneAsync(gr);
+
+
+            var studentOfThisGroup = _mongoRepositoryStudents.AsQueryable().Where(x => x.GroupId.Equals(nameOfTheGroup.Item2) || x.GroupName.Equals(nameOfTheGroup.Item1)).ToList();
             foreach (var stud in studentOfThisGroup)
             {
-                var newAssigmentList = stud.Assignments;
+                var grTotal = 0.0;
+                var newAssigmentList = (stud.Assignments.Count <= 0) ? gr.Assignemts : stud.Assignments;
                 for (var i = 0; i < newAssigmentList.Count; i++)
                 {
-                    if (newAssigmentList[i].Name.Equals(asgmnt.Name))
+                    var totalPerAssigment = 0;
+                    var currentStudentAssigment = newAssigmentList[i];
+                    if (currentStudentAssigment.AssigmentId != null && currentStudentAssigment.AssigmentId.Equals(asgmnt.AssigmentId))
                     {
                         newAssigmentList[i] = asgmnt;
                     }
+                    foreach (var c in newAssigmentList[i].MainTitle)
+                    {
+                        totalPerAssigment += c.Content.LearnerMark;
+                    }
+                    double num3 = (double)totalPerAssigment / (double)asgmnt.Total;
+                    var firstPercentage = num3 * 100;
+                    double weightPercentage = (double)asgmnt.Weight / 100.0;
+                    var percentageMark = firstPercentage * weightPercentage;
+                    grTotal += percentageMark;
                 }
                 stud.Assignments = newAssigmentList;
-                stud.TotalMark = grTotal.ToString();
+                stud.TotalMark = $"{Math.Round(grTotal, 2)}";
                 await _mongoRepositoryStudents.ReplaceOneAsync(stud);
             }
-
-            var gr = await _mongoRepositoryGroup.FindOneAsync(x => x.GroupId.Equals(nameOfTheGroup.Item2));
-            gr.Assignemts.Add(asgmnt);
-
-            await _mongoRepositoryGroup.ReplaceOneAsync(gr);
 
 
             return Ok(new { status = true, message = "successful request", data = asgmnt });
@@ -412,7 +439,7 @@ namespace gradingSystemAPI.Controllers
             var groups = _mongoRepositoryGroup.AsQueryable().ToList();
             foreach (var group in groups)
             {
-                if (group.GroupName.ToLower().Equals(grpName.ToLower()))
+                if (group.GroupName.ToLower().Equals(grpName.ToLower()) || group.GroupId.Equals(grpName))
                 {
                     g = group.GroupName;
                     i = group.GroupId;

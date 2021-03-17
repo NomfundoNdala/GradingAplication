@@ -49,15 +49,15 @@ namespace gradingSystemAPI.Controllers
         public async Task<IActionResult> Create([FromBody] LectureDTO newLecture)
         {
 
-            //var claims = Request.GetJwtClaims();
+            var claims = Request.GetJwtClaims();
 
-            //if (!claims.IsValidLogin())
-            //    return claims.Get401Result();
+            if (!claims.IsValidLogin())
+                return claims.Get401Result();
 
-            //if (!claims.Admin)
-            //{
-            //    return Ok(new { status = false, message = "Request to be performed by a lecture or admin ", data = "" });
-            //}
+            if (!claims.Admin)
+            {
+                return Ok(new { status = false, message = "Request to be performed by a lecture or admin ", data = "" });
+            }
 
             var exixstinDoctor = await
                 _mongoRepositoryAccountDetails.FindOneAsync(x => x.Username.Equals(newLecture.StuffNumber));

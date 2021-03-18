@@ -17,8 +17,8 @@ import { AssigmentManagerComponent } from './Components/Assigment/assigment-mana
 import { LecturerComponent } from './Components/lecturer/lecturer.component';
 import { NavBarComponent } from './Components/nav-bar/nav-bar.component';
 import { GroupComponent } from './Components/group/group.component';
-import { ReportsComponent } from './Components/reports/reports.component';
-import { EditStudentComponent } from './Components/edit-student/edit-student.component';
+import { ReportsComponent } from './components/reports/reports.component';
+import { EditStudentComponent } from './components/edit-student/edit-student.component';
 import { FooterComponent } from './Components/footer/footer.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';

@@ -22,8 +22,8 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'lecturer', component: LecturerComponent },
   { path: 'group', component: GroupComponent },
-  { path: 'reports', component: ReportsComponent },
-  { path: 'editS/:id', component: EditStudentComponent },
+  // { path: 'reports', component: ReportsComponent },
+  // { path: 'editS/:id', component: EditStudentComponent },
   { path: 'assignment', component: AssigmentManagerComponent },
   { path: 'group/:id', component: AssigmentManagerComponent }];
 

@@ -18,24 +18,24 @@ export class EditStudentComponent implements OnInit {
   returnUrl!: string;
   error = '';
   success = ''
-  editStudent: UStudent ={
-  groupname :'',
-  name :'',
-  studentNumber :'', 
-  surname :'',
-  totalMark :''
+  editStudent: UStudent = {
+    groupname: '',
+    name: '',
+    studentNumber: '',
+    surname: '',
+    totalMark: ''
   };
   uniqueId!: string;
 
-  recieveStudent :IStudent ={
-  totalMark : '',
-  groupName :'',
-  name :'',
-  studentNumber :'',
-  surname :'',
-  id :'',
-  uniqueId :'' 
- }
+  recieveStudent: IStudent = {
+    totalMark: '',
+    groupName: '',
+    name: '',
+    studentNumber: '',
+    surname: '',
+    id: '',
+    uniqueId: ''
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -43,34 +43,34 @@ export class EditStudentComponent implements OnInit {
     private router: Router,
     private apiService: ApiService,
     private authService: AuthService
-  ) { 
+  ) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-     
-    }else{
+
+    } else {
       this.router.navigateByUrl('/login');
     }
   }
 
   ngOnInit(): void {
     const url = window.location.pathname;
-        var id = url.substring(url.lastIndexOf('/') + 1);
-        this.uniqueId = id;
-        console.log('xxx', id);
-        this.apiService.getStudentById(id).subscribe((data)=>{
-          if (data.status) {
-            this.recieveStudent =data.data;
-          }
-       console.log(this.recieveStudent);
-       this.registerForm = this.formBuilder.group({
+    var id = url.substring(url.lastIndexOf('/') + 1);
+    this.uniqueId = id;
+    console.log('xxx', id);
+    this.apiService.getStudentById(id).subscribe((data) => {
+      if (data.status) {
+        this.recieveStudent = data.data;
+      }
+      console.log(this.recieveStudent);
+      this.registerForm = this.formBuilder.group({
         name: [this.recieveStudent.name, Validators.required],
         surname: [this.recieveStudent.surname, Validators.required],
         studentNumber: [this.recieveStudent.studentNumber, Validators.required],
         groupName: [this.recieveStudent.groupName, Validators.required]
       });
-  
-  
-        })
+
+
+    })
     this.registerForm = this.formBuilder.group({
       name: [this.recieveStudent.name, Validators.required],
       surname: [this.recieveStudent.surname, Validators.required],
@@ -85,15 +85,15 @@ export class EditStudentComponent implements OnInit {
       studentNumber: this.f.studentNumber.value,
       totalMark: this.recieveStudent.totalMark
     }
-   
+
   }
   get f() { return this.registerForm.controls; }
   deleteStudent() {
-    this.apiService.deleteStudent(this.uniqueId).subscribe((res)=>{
-    console.log(res);
+    this.apiService.deleteStudent(this.uniqueId).subscribe((res) => {
+      console.log(res);
 
     })
-    
+
     this.router.navigateByUrl('/home')
   }
   onSubmit() {

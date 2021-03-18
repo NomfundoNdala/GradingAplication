@@ -17,11 +17,10 @@ import { AssigmentManagerComponent } from './Components/Assigment/assigment-mana
 import { LecturerComponent } from './Components/lecturer/lecturer.component';
 import { NavBarComponent } from './Components/nav-bar/nav-bar.component';
 import { GroupComponent } from './Components/group/group.component';
-import { ReportsComponent } from './components/reports/reports.component';
-import { EditStudentComponent } from './components/edit-student/edit-student.component';
 import { FooterComponent } from './Components/footer/footer.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
+import { StudentEditComponent } from './Components/student-edit/student-edit.component';
 // import { GroupComponent } from './components/group/group.component';
 
 
@@ -52,9 +51,8 @@ const modules = [
     LecturerComponent,
     NavBarComponent,
     GroupComponent,
-    ReportsComponent,
-    EditStudentComponent,
-    FooterComponent
+    FooterComponent,
+    StudentEditComponent
   ],
   imports: [...modules],
   exports: [...modules],

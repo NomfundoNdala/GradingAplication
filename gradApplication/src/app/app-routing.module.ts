@@ -7,8 +7,8 @@ import { RegisterComponent } from './Components/register/register.component';
 import { StudentComponent } from './Components/student/student.component';
 import { LecturerComponent } from './Components/lecturer/lecturer.component';
 import { GroupComponent } from './Components/group/group.component';
-import { EditStudentComponent } from './components/edit-student/edit-student.component';
-import { ReportsComponent } from './components/reports/reports.component';
+import { EditStudentComponent } from './Components/edit-student/edit-student.component';
+import { ReportsComponent } from './Components/reports/reports.component';
 
 
 

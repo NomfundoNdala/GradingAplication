@@ -1,12 +1,11 @@
-<div class="col-md-6 offset-md-3 mt-5">
+<!-- <div class="col-md-6 offset-md-3 mt-5">
     <div class="card">
-          
+
         <h4 class="card-header">EDIT STUDENT
-            <span class="material-icons" (click)= "deleteStudent()"   style="float: right; cursor:pointer" >
+            <span class="material-icons" (click)="deleteStudent()" style="float: right; cursor:pointer">
                 delete
-                </span>
+            </span>
         </h4>
-        <!-- <p style="display: inline-flex; text-align: right;">D</p> -->
         <div class="card-body">
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                 <div class="form-group">
@@ -45,13 +44,13 @@
                 </div>
                 <div *ngIf="error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
                 <div *ngIf="success" class="alert alert-success mt-3 mb-0">{{success}}</div>
-                
+
                 <button [disabled]="loading" class="btn btn-primary">
                     <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                     SUBMIT
                 </button>
-               
+
             </form>
         </div>
     </div>
-</div>
+</div> -->

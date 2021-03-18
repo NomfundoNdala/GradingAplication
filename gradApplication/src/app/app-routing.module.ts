@@ -8,6 +8,7 @@ import { StudentComponent } from './Components/student/student.component';
 import { LecturerComponent } from './Components/lecturer/lecturer.component';
 import { GroupComponent } from './Components/group/group.component';
 import { EditStudentComponent } from './components/edit-student/edit-student.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 
 
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'lecturer', component: LecturerComponent },
   { path: 'group', component: GroupComponent },
+  { path: 'reports', component: ReportsComponent },
   { path: 'editS/:id', component: EditStudentComponent },
   { path: 'assignment', component: AssigmentManagerComponent },
   { path: 'group/:id', component: AssigmentManagerComponent }];

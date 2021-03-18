@@ -10,6 +10,7 @@
 //     return regexp.test(phoneNumber);
 // }
 
+
 export function validEmailAddress(email: string): boolean {
     const emailExpression = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
     var regexp = new RegExp(emailExpression);
@@ -26,4 +27,25 @@ export function validateStrongPassowrd(password: string): boolean {
     const passwordExpression = "^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$";
     var regexp = new RegExp(passwordExpression);
     return regexp.test(password);
+}
+
+export function ConvertToCSV(objArray: any, headerList: any) {
+    console.log(objArray);
+    let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    let str = '';
+    let row = 'S.No;';
+    for (let index in headerList) {
+        row += headerList[index] + ';';
+    }
+    row = row.slice(0, -1);
+    str += row + '\r\n';
+    for (let i = 0; i < array.length; i++) {
+        let line = (i + 1) + '';
+        for (let index in headerList) {
+            let head = headerList[index];
+            line += ';' + array[i][head];
+        }
+        str += line + '\r\n';
+    }
+    return str;
 }

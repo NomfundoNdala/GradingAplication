@@ -7,10 +7,19 @@ import { first } from 'rxjs/operators';
 import { IGroup, IStudent } from 'src/app/Interfaces/Student';
 import { AuthService } from 'src/app/Services/auth.service';
 import { Router } from '@angular/router';
+import { ConvertToCSV } from 'src/app/Helper';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 
 const ELEMENT_DATA: IStudent[] = [];
 
+interface IgroupCsv {
+  name: string,
+  surname: string,
+  studentNumber: string,
+  totalMark: string,
+  groupName: string
+}
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -36,7 +45,17 @@ export class HomeComponent implements OnInit {
   studentsInAGroup: any[] = [];
   dataSource = new MatTableDataSource(this.groupsAdded);
   expandedElement: IGroup = this.groupsAdded[0];
-  constructor(private apiService: ApiService, private authService: AuthService, private router: Router) {
+  jsonData: IgroupCsv[] = [];
+
+
+  contactForm!: FormGroup;
+
+  fileExtensions = [
+    { name: "CSV", value: ".csv" },
+    { name: "text file", value: ".txt" },
+    { name: "json file", value: ".json" }
+  ];
+  constructor(private apiService: ApiService, private fb: FormBuilder, private authService: AuthService, private router: Router) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
       this.getGroups();
@@ -51,6 +70,23 @@ export class HomeComponent implements OnInit {
     this.getGr(e.groupId);
   }
 
+  downloadFile(ext: string) {
+    let csvData = ConvertToCSV(this.jsonData, ['name', 'surname', 'studentNumber', 'totalMark', 'groupName']);
+    console.log(csvData)
+    let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
+    let dwldLink = document.createElement("a");
+    let url = URL.createObjectURL(blob);
+    let isSafariBrowser = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
+    if (isSafariBrowser) {  //if Safari open in new window to save file with random filename.
+      dwldLink.setAttribute("target", "_blank");
+    }
+    dwldLink.setAttribute("href", url);
+    dwldLink.setAttribute("download", "Group" + this.jsonData[0].groupName + ext);
+    dwldLink.style.visibility = "hidden";
+    document.body.appendChild(dwldLink);
+    dwldLink.click();
+    document.body.removeChild(dwldLink);
+  }
   GroupToMark(e: any) {
     console.log(e);
     this.router.navigateByUrl('group/' + e.groupId);
@@ -61,8 +97,13 @@ export class HomeComponent implements OnInit {
   }
   ngOnInit(): void {
     this.loading = true;
-
-
+    this.contactForm = this.fb.group({
+      country: [null]
+    })
+  }
+  onChangeExtensions(val: any) {
+    var firstLine = val.value.split('.')[1];
+    this.downloadFile('.' + firstLine);
   }
   getGroups() {
     this.apiService.getAllGroups().subscribe((res) => {
@@ -87,12 +128,22 @@ export class HomeComponent implements OnInit {
   getGr(el: string) {
     console.log(el);
     this.studentsInAGroup = [];
+    this.jsonData = [];
     this.loadingStudents = true;
     this.apiService.getStudentInAGroup(el).subscribe((res: any) => {
       if (res.status) {
         if (res.data) {
           this.studentsInAGroup.push(res.data);
-          console.log(this.studentsInAGroup)
+          this.studentsInAGroup[0].map((s: any, i: number) => {
+            var c: IgroupCsv = {
+              groupName: s.groupName,
+              name: s.name,
+              studentNumber: s.studentNumber,
+              surname: s.surname,
+              totalMark: s.totalMark
+            }
+            this.jsonData.push(c);
+          })
           if (this.studentsInAGroup[0].length <= 0) {
             this.foundNoStudent = true;
           } else {

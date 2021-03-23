@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FooterComponent implements OnInit {
  
-  private linkedinUrl: string = 'https://www.linkedin.com/in/mohammadfaysal/';
+
   private twitterUrl: string = 'https://twitter.com/Grader86183323/';
  
   constructor() { }

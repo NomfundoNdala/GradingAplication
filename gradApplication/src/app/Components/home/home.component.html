@@ -21,6 +21,9 @@
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
                     <div class="example-element-detail"
                         [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        <span class="material-icons" (click)="deleteGroup()" style="float: right; cursor:pointer">
+                            delete
+                        </span>
                         <div *ngIf='!foundNoStudent' class="markingButton">
                             <button class="btn btn-primary" (click)="GroupToMark(element)">Mark group</button><br />
                             <br />

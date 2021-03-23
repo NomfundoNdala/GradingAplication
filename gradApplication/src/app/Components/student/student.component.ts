@@ -10,7 +10,7 @@ import { IStudent } from 'src/app/Interfaces/Student';
 @Component({
   selector: 'app-student',
   templateUrl: './student.component.html',
-  styleUrls: ['./student.component.scss']
+  styleUrls: ['./student.component.scss'],
 })
 export class StudentComponent implements OnInit {
   isUserLoggedIn = false;
@@ -19,10 +19,8 @@ export class StudentComponent implements OnInit {
   submitted = false;
   returnUrl!: string;
   error = '';
-  success = ''
+  success = '';
   student!: IStudent;
-
-
 
   constructor(
     private studentService: StudentServiceService,
@@ -34,18 +32,17 @@ export class StudentComponent implements OnInit {
   ) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
-     
-    }else{
+    } else {
       this.router.navigateByUrl('/login');
     }
-   }
+  }
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
       surname: ['', Validators.required],
       studentNumber: ['', Validators.required],
-      groupName: ['', Validators.required]
+      groupName: ['', Validators.required],
     });
 
     this.student = {
@@ -53,14 +50,45 @@ export class StudentComponent implements OnInit {
       name: this.f.name.value,
       surname: this.f.surname.value,
       studentNumber: this.f.studentNumber.value,
-      totalMark: '0'
-    }
+      totalMark: '0',
+    };
 
     //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  get f() { return this.registerForm.controls; }
+  get f() {
+    return this.registerForm.controls;
+  }
 
+  file: any;
+  fileChanged(e: any) {
+    this.file = e.target.files[0];
+    console.log(this.file);
+  }
+  uploadDocument() {
+    let fileReader = new FileReader();
+    let c: any = '';
+    fileReader.onload = (e) => {
+      c = fileReader.result;
+      var lines = c.split('\n');
+      var columns = lines[0];
+      var studentsData: IStudent[] = [];
+
+      for (var line = 1; line < lines.length; line++) {
+        var dataStudents = lines[line].split(' ,');
+        console.log(lines[line]);
+        studentsData.push({
+          groupName: dataStudents[3],
+          name: dataStudents[1],
+          studentNumber: dataStudents[0],
+          surname: dataStudents[2],
+          totalMark: '0',
+        });
+      }
+      console.log(studentsData);
+    };
+    fileReader.readAsText(this.file);
+  }
   onSubmit() {
     this.submitted = true;
 
@@ -69,7 +97,7 @@ export class StudentComponent implements OnInit {
       return;
     }
 
-    // this is the pass you are missing , here we are taking the values from the form and then putting them into a variable student , 
+    // this is the pass you are missing , here we are taking the values from the form and then putting them into a variable student ,
     //which is of type Istudent meaning in is an object. similar to how we pass it on swagger
     this.student = {
       groupName: this.f.groupName.value,
@@ -80,33 +108,31 @@ export class StudentComponent implements OnInit {
     };
 
     this.loading = true;
-    this.studentService.createStudent(this.student).subscribe((data: any) => {
-      console.log(data.message);
-      console.log(data)
-      if (data.status) {
-        // this means we are saving in to local storage. why do you need to savw data after creating studennt ???
-        //  localStorage.setItem('userInfo', JSON.stringify(data.data));
+    this.studentService.createStudent(this.student).subscribe(
+      (data: any) => {
+        console.log(data.message);
+        console.log(data);
+        if (data.status) {
+          // this means we are saving in to local storage. why do you need to savw data after creating studennt ???
+          //  localStorage.setItem('userInfo', JSON.stringify(data.data));
 
-        //when you set success to a message , you need to stop the loading too meaning 
-        this.loading = false;  //this stops the loading
-        this.success = data.message;
-        this.error = '';
+          //when you set success to a message , you need to stop the loading too meaning
+          this.loading = false; //this stops the loading
+          this.success = data.message;
+          this.error = '';
 
-        //why do you route back to home after a student has been registered ???
-        this.router.navigateByUrl('/home');
-
-
-      } else {
-        this.error = data.message;
-      }
-      this.loading = false;
-    },
-      error => {
+          //why do you route back to home after a student has been registered ???
+          this.router.navigateByUrl('/home');
+        } else {
+          this.error = data.message;
+        }
+        this.loading = false;
+      },
+      (error) => {
         this.error = error.message;
         this.success = '';
         this.loading = false;
-      });
+      }
+    );
   }
-
-
 }

@@ -2,6 +2,9 @@
 <div class="col-md-6 offset-md-3 mt-5">
     <div class="card">
         <h4 class="card-header">REGISTER STUDENT</h4>
+        <input type ="file"  (change)="fileChanged($event)">  
+        <button type="button" class="btn btn-primary" style="float: right"
+        (click)="uploadDocument()">Upload File</button>
         <div class="card-body">
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                 <div class="form-group">
@@ -41,9 +44,9 @@
 
                 <button [disabled]="loading" class="btn btn-primary">
                     <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                    SUBMIT
-                     
+                    SUBMIT   
                 </button>
+                
                 <div *ngIf="error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
                 <div *ngIf="success" class="alert alert-success mt-3 mb-0">{{success}}</div>
             </form>

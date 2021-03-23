@@ -91,6 +91,7 @@ export class HomeComponent implements OnInit {
     console.log(e);
     this.router.navigateByUrl('group/' + e.groupId);
   }
+  
   ViewStudent(student: any) {
     console.log(student);
     this.router.navigateByUrl('/editS/' + student.uniqueId)
@@ -101,6 +102,11 @@ export class HomeComponent implements OnInit {
       country: [null]
     })
   }
+
+  deleteGroup() {
+
+  }
+  
   onChangeExtensions(val: any) {
     var firstLine = val.value.split('.')[1];
     this.downloadFile('.' + firstLine);

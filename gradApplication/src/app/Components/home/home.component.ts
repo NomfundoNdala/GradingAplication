@@ -1,3 +1,4 @@
+import { LecturerService } from './../../Services/lecturer.service';
 
 import { Component, HostListener, OnInit } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
@@ -9,6 +10,7 @@ import { AuthService } from 'src/app/Services/auth.service';
 import { Router } from '@angular/router';
 import { ConvertToCSV } from 'src/app/Helper';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Group } from 'src/app/Interfaces/lecturer';
 
 
 const ELEMENT_DATA: IStudent[] = [];
@@ -46,8 +48,8 @@ export class HomeComponent implements OnInit {
   dataSource = new MatTableDataSource(this.groupsAdded);
   expandedElement: IGroup = this.groupsAdded[0];
   jsonData: IgroupCsv[] = [];
-
-
+  groupName!: Group;
+  groupId!: string;
   contactForm!: FormGroup;
 
   fileExtensions = [
@@ -55,7 +57,9 @@ export class HomeComponent implements OnInit {
     { name: "text file", value: ".txt" },
     { name: "json file", value: ".json" }
   ];
-  constructor(private apiService: ApiService, private fb: FormBuilder, private authService: AuthService, private router: Router) {
+ 
+
+  constructor(private apiService: ApiService, private fb: FormBuilder, private authService: AuthService, private router: Router, private lecturerService :LecturerService) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
       this.getGroups();
@@ -103,10 +107,18 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  deleteGroup() {
-
+  deleteGroup(element : any) {
+    
+    this.lecturerService.deleteGroup(element.groupId).subscribe((res :any)=>{
+      console.log(res);
+      if (res.status) {
+        this.router.navigateByUrl('/home')
+      }  
+      
+    });
+    
   }
-  
+ 
   onChangeExtensions(val: any) {
     var firstLine = val.value.split('.')[1];
     this.downloadFile('.' + firstLine);
@@ -126,6 +138,15 @@ export class HomeComponent implements OnInit {
       this.loading = false;
     })
   }
+ 
+  // deleteStudent() {
+  //   this.apiService.deleteStudent(this.uniqueId).subscribe((res) => {
+  //     console.log(res);
+
+  //   })
+
+  //   this.router.navigateByUrl('/home')
+  // }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

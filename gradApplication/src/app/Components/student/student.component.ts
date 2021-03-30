@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 import { ApiService } from 'src/app/Services/api.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IStudent } from 'src/app/Interfaces/Student';
+import { NgxCsvParser } from 'ngx-csv-parser';
 
 @Component({
   selector: 'app-student',
@@ -21,6 +22,7 @@ export class StudentComponent implements OnInit {
   error = '';
   success = '';
   student!: IStudent;
+  csvRecords: any[] = [];
 
   constructor(
     private studentService: StudentServiceService,
@@ -28,7 +30,8 @@ export class StudentComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    private authService: AuthService
+    private authService: AuthService,
+    private ngxCsvParser: NgxCsvParser
   ) {
     if (authService.getIsUserLoggedIn()) {
       this.isUserLoggedIn = true;
@@ -66,29 +69,54 @@ export class StudentComponent implements OnInit {
     console.log(this.file);
   }
   uploadDocument() {
+    // const formData: FormData = new FormData();
+
     let fileReader = new FileReader();
     let c: any = '';
+    fileReader.readAsText(this.file);
     fileReader.onload = (e) => {
       c = fileReader.result;
       var lines = c.split('\n');
       var columns = lines[0];
-      var studentsData: IStudent[] = [];
+      var studentsData: any[] = [];
 
-      for (var line = 1; line < lines.length; line++) {
-        var dataStudents = lines[line].split(' ,');
-        console.log(lines[line]);
-        studentsData.push({
-          groupName: dataStudents[3],
-          name: dataStudents[1],
-          studentNumber: dataStudents[0],
-          surname: dataStudents[2],
-          totalMark: '0',
-        });
+      if (lines != '') {
+        for (var line = 1; line < lines.length; line++) {
+          var dataStudents = lines[line].split(',');
+          if (lines[line] != '') {
+            studentsData.push({
+              groupname: dataStudents[2],
+              name: dataStudents[1],
+              studentNumber: dataStudents[0],
+              surname: dataStudents[3],
+              totalMark: '0',
+            });
+          }
+        }
+        this.studentService.createStudents(studentsData).subscribe(
+          (data: any) => {
+            console.log(data.message);
+            console.log(data);
+            if (data.status) {
+              this.loading = false; //this stops the loading
+              this.success = data.message;
+              this.error = '';
+              this.router.navigateByUrl('/home');
+            } else {
+              this.error = data.message;
+            }
+            this.loading = false;
+          },
+          (error) => {
+            this.error = error.message;
+            this.success = '';
+            this.loading = false;
+          }
+        );
       }
-      console.log(studentsData);
     };
-    fileReader.readAsText(this.file);
   }
+
   onSubmit() {
     this.submitted = true;
 

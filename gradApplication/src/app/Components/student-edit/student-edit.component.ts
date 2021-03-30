@@ -88,7 +88,8 @@ export class StudentEditComponent implements OnInit {
     }
 
   }
-  get f() { return this.registerForm.controls; }
+  get f() { return this.registerForm.controls;}
+
   deleteStudent() {
     this.apiService.deleteStudent(this.uniqueId).subscribe((res) => {
       console.log(res);

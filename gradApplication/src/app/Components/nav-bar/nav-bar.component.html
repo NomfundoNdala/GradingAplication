@@ -24,8 +24,6 @@
         <div class="dropdown-menu dropdown-menu-right dropdown-purple" aria-labelledby="navbarDropdownMenuLink-5">
           <a *ngIf="isAdmin" class="dropdown-item waves-effect waves-light" [routerLinkActive]="['active']"
             [routerLink]="['/lecturer']">Add Lecturer</a>
-          <a *ngIf="isAdmin" class="dropdown-item waves-effect waves-light" [routerLinkActive]="['active']"
-            [routerLink]="['/reports']">Reports</a>
           <a *ngIf="isUserLoggedIn" class="dropdown-item waves-effect waves-light" [routerLinkActive]="['active']"
             [routerLink]="['/student']">Add Student</a>
           <a *ngIf="isUserLoggedIn" class="dropdown-item waves-effect waves-light" [routerLinkActive]="['active']"

@@ -19,7 +19,7 @@ var LoggedUserData: ILoggedUserData = {
 export class ApiService {
   studEdit!: UStudent;
   constructor(private httpClient: HttpClient) {
-    apiUrl = 'https://gradingsystem2022.azurewebsites.net';
+    apiUrl = 'http://gradingsystem2022.azurewebsites.net';
     // apiUrl = 'https://localhost:5001';
     this.getLoggedUserData();
   }

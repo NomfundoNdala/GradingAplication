@@ -7,7 +7,7 @@ import { ApiService } from './api.service';
   providedIn: 'root',
 })
 export class LecturerService {
-  apiUrl = 'https://gradingsystemapi20210307145917.azurewebsites.net';
+  apiUrl = 'https://gradingsystem2022.azurewebsites.net';
 
   constructor(private httpClient: HttpClient, private apiService: ApiService) {}
 
@@ -25,11 +25,10 @@ export class LecturerService {
     );
   }
 
-  deleteGroup(groupId :string) {
-    return this.httpClient.delete(this.apiUrl + `/api/Lecture/DeleteGroup?groupId=${groupId}`, { headers: this.apiService.getLoggedUserData()});
+  deleteGroup(groupId: string) {
+    return this.httpClient.delete(
+      this.apiUrl + `/api/Lecture/DeleteGroup?groupId=${groupId}`,
+      { headers: this.apiService.getLoggedUserData() }
+    );
   }
-
-
- 
-
 }

@@ -13,9 +13,8 @@ import { ApiService } from './api.service';
 })
 export class StudentServiceService {
   // progress: number = 0;
-  apiUrl = 'https://gradingsystemapi20210307145917.azurewebsites.net';
+  apiUrl = 'https://gradingsystem2022.azurewebsites.net';
   constructor(private httpClient: HttpClient, private apiService: ApiService) {}
-  
 
   createStudent(student: IStudent) {
     return this.httpClient.post(this.apiUrl + '/api/Student/create', student, {
@@ -47,17 +46,14 @@ export class StudentServiceService {
     );
   }
 
-  createStudents(student: any[]  )
-  {
-    console.log("hhh", student);
-    return this.httpClient.post(this.apiUrl + '/api/Student/createStudentList', student, { headers: this.apiService.getLoggedUserData()} )
+  createStudents(student: any[]) {
+    console.log('hhh', student);
+    return this.httpClient.post(
+      this.apiUrl + '/api/Student/createStudentList',
+      student,
+      { headers: this.apiService.getLoggedUserData() }
+    );
   }
-  
-
-
-
-
-  
 
   // upload(formData: any) {
   //   return this.httpClient
@@ -81,7 +77,11 @@ export class StudentServiceService {
   //     );
   // }
 }
-function student(arg0: string, student: any, IStudent: any, arg3: { headers: any; }) {
+function student(
+  arg0: string,
+  student: any,
+  IStudent: any,
+  arg3: { headers: any }
+) {
   throw new Error('Function not implemented.');
 }
-
